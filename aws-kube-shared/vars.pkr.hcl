@@ -1,6 +1,6 @@
 # https://stackoverflow.com/questions/74460639/packer-cant-pass-var-file-as-input-to-build
 
-# Your Owner ID in AWS  
+# Your AWS Account ID without dashes
 aws_owner_id = [""]
 
 # Your AWS VPC ID from provided by Terraform

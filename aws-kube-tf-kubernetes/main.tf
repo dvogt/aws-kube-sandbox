@@ -11,9 +11,9 @@ terraform {
 # Can be commented out if using the default ~/.aws/credentials
 # Can be commented out if using the default ~/.aws/credentials
 provider "aws" {
-  shared_credentials_files = var.aws_credentials_for_tf
-  profile                  = "default"
-  region                   = var.aws_region
+  # shared_credentials_files = var.aws_credentials_for_tf
+  profile = "default"
+  region  = var.aws_region
 }
 
 # ----------------------------

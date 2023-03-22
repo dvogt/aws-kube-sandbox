@@ -2,7 +2,7 @@
 # Must declare variables here
 # Values are declared here: ../../../aws-kube-shared/vars.pkr.hcl
 
-# The owner id in AWS for Canonical 
+# Your AWS Account ID without dashes
 variable "aws_owner_id" {
   type = list(string)
 }

@@ -1,17 +1,16 @@
 # Must declare variables here
-# Values are declared here: ../../../aws-kube-shared/vars.pkr.hcl
 
-# The owner for the image
+# Your AWS Account ID without dashes 
 variable "aws_owner_id" {
   type = list(string)
 }
 
-# Your AWS VPC ID from provided by Terraform
+# Your AWS VPC ID provided after creating Pakcer VPC with Terraform
 variable "vpc_id" {
   type = string
 }
 
-# Your AWS SUBNET in the AWS VPC provided by Terraform
+# Your AWS SUBNETprovided after creating Pakcer VPC with Terraform
 variable "subnet_id" {
   type = string
 }

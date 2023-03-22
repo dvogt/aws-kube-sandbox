@@ -19,7 +19,7 @@ These are designed to be followed in order.
 |Step|Directory|Description|
 |---|---|--|
 |**1**|aws-kube-ansible-builds|Test the Ansible code locally using Vagrant|
-|**2**|aws-kube-shared        |Update your public ssh key and aws credentials to be used by Terraform|
+|**2**|aws-kube-shared        |Update your public ssh key and aws credentials to be used by Terraform. See instructions below|
 |**3**|aws-kube-tf-packer    |Create the AWS VPC to build AMI Images using Terraform |
 |**4**|aws-kube-ansible-builds|Use Packer to build your AMI images|
 |**5**|aws-kube-tf-packer    |Destroy the AWS VPC to build AMI Images|
@@ -29,6 +29,20 @@ These are designed to be followed in order.
 * Log in to the Bastion Host
 * Log in to the Kube Controller
 * Play in the sandbox. Be courages and break things. It is the best way to learn. Besides that you can always destroy the environment and start over.
+
+
+# Instructions for setting up your environment
+
+* Make sure you have a publically routable IPv6 on your workstation.
+* Add your public SSH key in *aws-kube-shared/aws_terraform_rsa.pub*. This is used to add your images to log in to. 
+* Add your AWS credentials in ~home/.aws/credentials
+
+  ```
+    [default]
+    aws_access_key_id=<your aws access key>
+    aws_secret_access_key=<your aws secret key>
+  ```
+
 
 # Framework parameters that were in scope for this project
 
@@ -62,10 +76,6 @@ These are designed to be followed in order.
   * To deploy software packages and add configuration files to the images. 
 * **IPv6:**
   * Get expereince with IPV6
-  * A NAT Gateway for IPv4 is included but has been commented out. This can be found in:
-       * aws-kube-tf-kuberentes/modules/network/nat.tf
-  * To avoid building and paying for a NAT Gateyway
-  * Added security to make sure that only my host can connect directly to the bastion host.
   
 
 # Prerequsites and versions
@@ -81,7 +91,7 @@ For that reason, I am listing the known versions to work with this enviroment.
 |Packer|1.86|
 |Packer Amazon Plugin|0.0.2|
 |Terrform|1.4.2|
-|Vagrant Ubuntu Image|TBD|
+|Vagrant Ubuntu Image|ubuntu/jammy64|
 |AWS Ubuntu Image|ubuntu-jammy-22.04-amd64-server-*|
 |Kubernetes packages|kubeadm=1.26.3-00<br/>kubelet=1.26.3-00<br/>kubectl=1.26.3-00|
 |Docker packges||

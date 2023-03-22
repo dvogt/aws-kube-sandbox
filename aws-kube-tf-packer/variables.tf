@@ -9,11 +9,11 @@ variable "project_name" {
   default = "packer_vpc"
 }
 
-variable "aws_credentials_for_tf" {
-  description = "AWS credentials for Terraform to access AWS environment"
-  type        = list(string)
-  default     = ["../aws-kube-shared/aws-credentials"]
-}
+# variable "aws_credentials_for_tf" {
+#   description = "AWS credentials for Terraform to access AWS environment"
+#   type        = list(string)
+#   default     = ["../aws-kube-shared/aws-credentials"]
+# }
 
 # ======================================================
 # General Networking
