@@ -1,0 +1,2 @@
+- name: Import kubernetes workers
+  import_tasks: kub_worker.yaml

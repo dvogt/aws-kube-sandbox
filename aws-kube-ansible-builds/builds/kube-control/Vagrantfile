@@ -1,0 +1,61 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# For using varibles if need be
+# require "yaml"
+# config_file = "vagrant-vars.yml"
+# if !File.exists?(File.join(File.dirname(__FILE__), config_file))
+#   puts "The vagrant-vars.yml file config is missing"
+#   abort
+# end
+
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+  # The most common configuration options are documented and commented below.
+  # For a complete reference, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://vagrantcloud.com/search.
+  config.vm.box = "ubuntu/jammy64"
+  config.vm.hostname = "kubernetes"
+
+  # config.vm.network "private_network", type: "dhcp"
+
+  config.vm.provider "virtualbox" do |vb|
+    # Display the VirtualBox GUI when booting the machine
+    # vb.gui = true
+
+    # Customize the amount of memory on the VM:
+    # vb.memory = "2048"
+    vb.memory = "4096"
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    usermod -a -G admin ubuntu
+    echo "%ubuntu ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/ubuntu
+    cp -pr /home/vagrant/.ssh /home/ubuntu/
+    chown -R ubuntu:ubuntu /home/ubuntu
+  SHELL
+
+  VAGRANT_COMMAND = ARGV[0]
+  if VAGRANT_COMMAND == "ssh"
+    config.ssh.username = 'ubuntu'
+  end
+
+  config.vm.provision :ansible do |ansible|
+    ansible.playbook = "kube-control.yml" 
+  end
+
+  # These scripts are ran from Vagrant becuause Vagrant has access to ssh. 
+  # Terraform we may not have access to acces to ssh so they need to be run manually
+  # TODO: consider having these run once at start up but after the packer build
+  # config.vm.provision "shell", inline: <<-SHELL
+  #   /home/ubuntu/kubeadm.sh
+  #   su -c "/home/ubuntu/calico.sh" ubuntu
+  # SHELL
+end

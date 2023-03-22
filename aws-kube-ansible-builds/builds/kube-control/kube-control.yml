@@ -1,0 +1,10 @@
+---
+- name: Build Kubernetes Contorl
+  hosts: all
+  remote_user: ubuntu
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  roles:
+    - ../../roles/kube_control

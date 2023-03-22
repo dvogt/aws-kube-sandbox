@@ -1,0 +1,167 @@
+
+# The vars file could be commented out and the vars/main.yml file will be used by default
+- name: Load Vars file
+  include_vars: ../../../../aws-kube-shared/vars.ansible.yml
+
+- name: Install base packages
+  apt:
+    name: "{{ item }}"
+  with_items: "{{ base_packages }}"
+  
+- name: Install docker keyring
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    keyring: /etc/apt/keyrings/docker.gpg
+    state: present  
+
+- name: Install apt keyring
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present  
+
+- name: Add docker apt repo
+  apt_repository:
+    repo: "{{ docker_apt_repo }}"
+    state: present
+    filename: 
+    
+- name: Add kubernetes apt repo
+  apt_repository:
+    repo: "{{ kube_apt_repo }}"
+    state: present
+    filename: 
+
+- name: Install docker packages
+  apt:
+    name: "{{ item }}"
+  with_items: "{{ docker_packages }}"
+
+- name: Adding user 'ubuntu' to group docker
+  user:
+    name: 'ubuntu'
+    groups: docker
+    append: yes
+
+- name: Insert lines to containerd
+  blockinfile:
+    path: /etc/modules-load.d/containerd.conf
+    backup: yes
+    block: |
+      overlay
+      br_netfilter
+    create: true
+
+- name: Start modprobe overlay
+  command: modprobe overlay
+
+- name: Start modprobe br_netfilter
+  command: modprobe br_netfilter
+
+- name: Insert lines to sysctl kubernetes
+  blockinfile:
+    path: /etc/sysctl.d/99-kubernetes-cri.conf
+    backup: yes
+    block: |
+      net.bridge.bridge-nf-call-iptables  = 1
+      net.ipv4.ip_forward                 = 1
+      net.bridge.bridge-nf-call-ip6tables = 1
+    create: true
+
+- name: Restart sysctl to enable br_netfilter and overlay
+  command: sysctl --system
+
+- name: Turn Swap off permanently
+  command: systemctl mask swap.target
+
+- name: Create containerd config dir
+  become: yes
+  become_method: sudo
+  file:
+    path: /etc/containerd
+    state: directory 
+
+- name: Create conatinerd conifg file
+  become: yes
+  become_method: sudo
+  template:
+    src: containerd.config.toml
+    dest: /etc/containerd/config.toml
+    mode: '0644'
+
+- name: Restart containerd
+  systemd:
+    name: containerd
+    state: restarted
+    daemon_reload: yes
+
+- name: Enable containerd
+  systemd:
+    name: containerd
+    enabled: true
+    masked: no
+
+- name: Install kube packages
+  apt:
+    name: "{{ item }}={{ kube_package_version }}"
+  with_items: "{{ kube_packages }}"
+
+- name: apt-mark hold kubeadm
+  dpkg_selections:
+    name: kubeadm
+    selection: hold
+
+- name: apt-mark hold kubelet
+  dpkg_selections:
+    name: kubelet
+    selection: hold
+
+- name: apt-mark hold kubectl
+  dpkg_selections:
+    name: kubectl
+    selection: hold 
+
+# TODO: kubeadm init should probably be a service
+# - name: Run kubeadm init
+#   become: yes
+#   become_method: sudo
+#   command: kubeadm init --pod-network-cidr 192.168.0.0/16 --kubernetes-version 1.24.0
+#   register: kubeadm_init
+
+- name: Create /home/ubuntu/.kube dir
+  become: yes
+  become_method: sudo
+  file:
+    path: /home/ubuntu/.kube
+    state: directory 
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: kubeadm shell script
+  template:
+    src: kubeadm.sh.j2
+    dest: /home/ubuntu/kubeadm.sh
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: Calico yaml file
+  template:
+    src: calico.yaml
+    # https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
+    dest: /home/ubuntu/calico.yaml
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+
+
+- name: Copy Calico shell script 
+  template:
+    src: calico.sh
+    # https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
+    dest: /home/ubuntu/calico.sh
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+
