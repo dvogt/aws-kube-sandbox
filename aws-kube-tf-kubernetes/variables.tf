@@ -21,10 +21,10 @@ variable "project_name" {
   default     = "aws-kube-sandbox"
 }
 
-variable "ami_public_key" {
+variable "ssh_pub_key_path" {
   description = "Public Key to be added to images to ssh into"
   type        = string
-  default     = "../aws-kube-shared/aws_terraform_rsa.pub"
+  default     = "~/.ssh/id_rsa.pub"
 }
 
 # variable "aws_credentials_for_tf" {

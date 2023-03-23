@@ -34,7 +34,7 @@ These are designed to be followed in order.
 # Instructions for setting up your environment
 
 * Make sure you have a publically routable IPv6 on your workstation.
-* Add your public SSH key in *aws-kube-shared/aws_terraform_rsa.pub*. This is used to add your images to log in to. 
+* Add your public SSH key in *~/.ssh/id_rsa.pub*. This is used to add your images to log in to. 
 * Add your AWS credentials in ~home/.aws/credentials
 
   ```
