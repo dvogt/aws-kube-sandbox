@@ -5,7 +5,7 @@ resource "aws_security_group" "sg_bastion" {
   vpc_id      = var.aws_vpc_id
 
   ingress {
-    description = "ICMP from VPC ipv4"
+    description = "ICMP from your workstation using IPv4"
     from_port   = -1
     to_port     = -1
     protocol    = "icmp"
@@ -13,7 +13,7 @@ resource "aws_security_group" "sg_bastion" {
   }
 
   ingress {
-    description = "SSH from VPC"
+    description = "SSH from your workstation using IPv4"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -21,7 +21,7 @@ resource "aws_security_group" "sg_bastion" {
   }
 
   ingress {
-    description      = "SSH from VPC"
+    description      = "SSH from your workstation using IPv6"
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
@@ -29,16 +29,16 @@ resource "aws_security_group" "sg_bastion" {
   }
 
   ingress {
-    description      = "ICMP from VPC ipv6"
+    description      = "ICMP from your workstation using IPv6"
     from_port        = -1
     to_port          = -1
     protocol         = "icmpv6"
     ipv6_cidr_blocks = [var.ingress_ip_v6]
   }
 
-
   # outbound internet access
   egress {
+    description = "ICMP out using IPv6"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -46,6 +46,7 @@ resource "aws_security_group" "sg_bastion" {
   }
 
   egress {
+    description      = "ICMP out using IPv6"
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
