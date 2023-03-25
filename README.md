@@ -125,7 +125,7 @@ It might be tempting to search Google for `What is my IP` to see if you are usin
 
 The best way of seeing if you have an IPv6 address is to run: `curl -S ipv6.icanhazip.com` or going to http://ipv6.icanhazip.com. ipv6.icanhazip.com does not have an IPv4 DNS entry so don't expect it work if you are only using IPv4. Use http://ipv4.icanhazip.com if you want to see your IPv4 address.
 
-The provided Terraform code runs `curl -S ipv6.icanhazip.com` to get your IPv6 address and `curl -S ipv4.icanhazip.com` to get your IPv6 address. These IP addresses are used to limit access to you bastion hosts to those two IP addresses.
+The provided Terraform code runs `curl -S ipv6.icanhazip.com` to get your IPv6 address and `curl -S ipv4.icanhazip.com` to get your IPv4 address. These IP addresses are used to limit access to you bastion hosts to those two IP addresses.
 
 
 ## What if I don't have an IPv6 address? 
