@@ -32,7 +32,7 @@ resource "aws_default_security_group" "packer" {
   # }
 
   ingress {
-    description      = "SSH from VPC"
+    description      = "SSH from your workstation IPv6"
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
@@ -40,7 +40,7 @@ resource "aws_default_security_group" "packer" {
   }
 
   ingress {
-    description      = "ICMP from VPC ipv6"
+    description      = "ICMP from your workstation IPv6"
     from_port        = -1
     to_port          = -1
     protocol         = "icmpv6"

@@ -103,9 +103,11 @@ variable "kube_controller_ip" {
 
 variable "kube_workers_ips" {
   description = "This will determine how many workers are created."
+  # To add more worker nodes, add to the list below. 
+  # The mapping needs to start with zero or it will break Terraform
   default = {
     "0" = "10.0.5.102"
-    # "1" = "10.0.5.103"
+    "1" = "10.0.5.103"
     # "2" = "10.0.5.104"
   }
 }
