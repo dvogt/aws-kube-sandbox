@@ -1,14 +1,15 @@
-# https://stackoverflow.com/questions/74460639/packer-cant-pass-var-file-as-input-to-build
+# There should be no need to change these variables.
 
-# Your AWS Account ID without dashes
-aws_owner_id = [""]
+# Name of Project. 
+# This is used to find the VPC, subnet and security groups built by terraform
+# If you change the project name here, you will need to change the project_name variable  
+# in the aws-kube-tf-packer/variables.tf file as well.
+project_name = "aws-kube-packer"
 
-# Your AWS VPC ID from provided by Terraform
-vpc_id = ""
+# Ubuntu owner id 
+aws_ami_owner_id = ["099720109477"]
 
-# Your AWS SUBNET in the AWS VPC provided by Terraform
-# This is needed to open for packer to create a temporary security group
-subnet_id = ""
+ssh_username = "ubuntu"
 
 # AMI Image to pull from is the name of the image. 
 # This image may be in different regions but will have differfent AMI IDs

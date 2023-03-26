@@ -1,13 +1,14 @@
 
 
 data "aws_ami" "kube_controller_ami" {
+  # Latest build
   most_recent = true
-  # AWS Account ID being worked on
+  # AWS Account ID where AMI is pulled from.
   owners = ["self"]
 
   filter {
     name   = "name"
-    values = ["kube-control"]
+    values = var.aws_ami_kube_control_images
   }
 
   filter {
@@ -19,12 +20,12 @@ data "aws_ami" "kube_controller_ami" {
 data "aws_ami" "kube_worker_ami" {
   # Latest build
   most_recent = true
-  # AWS Account ID being worked on
+  # AWS Account ID where AMI is pulled from.
   owners = ["self"]
 
   filter {
     name   = "name"
-    values = ["kube-worker"]
+    values = var.aws_ami_kube_worker_images
   }
 
   filter {
@@ -36,7 +37,7 @@ data "aws_ami" "kube_worker_ami" {
 data "aws_ami" "latest_ubuntu" {
   # Latest build
   most_recent = true
-  # Owner of the AMI will be using to build from
+  # AWS Account ID of the AMI will be using to build from. 
   owners = var.aws_ami_owners
 
   filter {

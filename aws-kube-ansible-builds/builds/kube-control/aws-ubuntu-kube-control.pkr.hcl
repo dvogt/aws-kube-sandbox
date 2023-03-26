@@ -1,17 +1,15 @@
 # Must declare variables here
 
-# Your AWS Account ID without dashes 
-variable "aws_owner_id" {
-  type = list(string)
-}
-
-# Your AWS VPC ID provided after creating Pakcer VPC with Terraform
-variable "vpc_id" {
+variable "project_name" {
   type = string
 }
 
-# Your AWS SUBNETprovided after creating Pakcer VPC with Terraform
-variable "subnet_id" {
+# Your AWS Account ID without dashes 
+variable "aws_ami_owner_id" {
+  type = list(string)
+}
+
+variable "ssh_username" {
   type = string
 }
 
@@ -36,6 +34,12 @@ variable "instance_type" {
   type = string
 }
 
+locals {
+  today = formatdate("YYYY-MM-DD", timestamp())
+}
+
+# -----------------------------
+
 packer {
   required_plugins {
     amazon = {
@@ -48,8 +52,10 @@ packer {
 # The source to build from
 # https://developer.hashicorp.com/packer/plugins/builders/amazon/ebs
 source "amazon-ebs" "kube_control" {
+  # skip_create_ami = true
+
   # The name of the resulting AMI
-  ami_name = "kube-control"
+  ami_name = "kube-control-${local.today}"
 
   # The EC2 instance type to use while building the AMI
   instance_type = var.instance_type
@@ -58,6 +64,29 @@ source "amazon-ebs" "kube_control" {
   # Regions to copy the finished AMIs to
   ami_regions = var.ami_regions
 
+  ssh_username = var.ssh_username
+
+  # VPC filter
+  vpc_filter {
+    filters = {
+      "tag:Name" = "${var.project_name}"
+    }
+  }
+
+  # Subnet filter
+  subnet_filter {
+    filters = {
+      "tag:Name" = "${var.project_name}"
+    }
+  }
+
+  # This prevents packer from creating a a temporary security group that is too permissive
+  security_group_filter {
+    filters = {
+      "tag:Name" = "${var.project_name}"
+    }
+  }
+
   source_ami_filter {
     filters = {
       name                = var.ami_image_to_pull_from
@@ -65,19 +94,17 @@ source "amazon-ebs" "kube_control" {
       virtualization-type = "hvm"
     }
     most_recent = true
-    owners      = var.aws_owner_id
-  }
-  vpc_id       = var.vpc_id
-  subnet_id    = var.subnet_id
-  ssh_username = "ubuntu"
+    owners      = var.aws_ami_owner_id
 
+  }
 }
 
-# 
+
 build {
+
   # The name of of the build used for logs.
   # This is optional
-  name = "kube-control"
+  name = "kube-control-${local.today}"
 
   # sources is listed above:
   #    source "amazon-ebs" "kube_control" {  
