@@ -6,7 +6,7 @@
 
 variable "project_name" {
   type    = string
-  default = "packer_vpc"
+  default = "aws-kube-packer"
 }
 
 # variable "aws_credentials_for_tf" {

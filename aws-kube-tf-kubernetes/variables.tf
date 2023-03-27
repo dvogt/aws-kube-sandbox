@@ -4,15 +4,27 @@
 # ======================================================
 
 variable "aws_ami_owners" {
-  description = "This is the account id for Amazon to pull the base image from to build the bastion host"
+  description = "This is the owner account id for Ubuntu to tell Amazon where to pull the base image from to build the bastion host"
   type        = list(string)
   default     = ["099720109477"]
 }
 
 variable "aws_ami_images" {
-  description = "This is the AMI images used for building the bastion host"
+  description = "This is the AMI image used for building the bastion host"
   type        = list(string)
   default     = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+}
+
+variable "aws_ami_kube_control_images" {
+  description = "This is the AMI image used for building the kube_control host"
+  type        = list(string)
+  default     = ["kube-control-*"]
+}
+
+variable "aws_ami_kube_worker_images" {
+  description = "This is the AMI image used for building the kube_worker hosts"
+  type        = list(string)
+  default     = ["kube-worker-*"]
 }
 
 variable "project_name" {

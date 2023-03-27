@@ -35,6 +35,7 @@ These are designed to used in the order the appear in the table below.
 
 * Make sure you have a publically routable IPv6 on your workstation (see [About IPv6](#about-ipv6-in-this-environment) below). 
 * Add your public SSH key in *~/.ssh/id_rsa.pub*. This public key is added to your AMIs to log in to. 
+
 * Add your [shared AWS credential file](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#shared-configuration-and-credentials-files) at ~home/.aws/credentials. This allows Terraform to build your environment in AWS.  
 
   ```
@@ -52,11 +53,9 @@ These are designed to used in the order the appear in the table below.
    * Note: The AWS AMI images are stored on AWS even after the VPCs are destroyed.
 * All AWS instances are reachable from a single bastion host.
 
-
 # Out of Scope parameters
 * Redundancy of the environment. 
 * More to come.
- 
 
 # Features
 
@@ -97,23 +96,30 @@ I am listing exact versions that were used to build this enviroment.
 
 # Costs and Timing
 
-**NOTE:** More accurate Costs and Timing will be provided at a later date. 
-
 ## Timing
 Generally the most time consuming piece is setting up your workspace environment (Terraform, AWS, Ansible, Packer and Vagrant) in addition to setting up tasks such your credenitals to allow Terraform to work with AWS. 
 
 Once your workspace environment is setup, you can generally be up and running in AWS in a couple of hours that includes 
-* Building the two test Vagrant builds 
-* Creating and destroying the Packer VPC
-* Building the two Kuberentes AMIs in the Packer VPC
-* Creating and destroying the Kubernetes VPC
 
-After the two AMIs are built and stored in AWS, you will only need to *create and destroy the Kubernetes VPC*, unless you want to make changes to the AMIs. The creation of the Kuberentes VPC takes approximately 15 mintues. I will provide more accurate times later.
+|Process|Timing|
+|---|---|
+|Building the two test Vagrant builds|~03:30 min: Build<br/>~00:09 min: Destroy|
+|Creating and destroying the Packer VPC|~02:30 min: Build<br/>~01:00 min: Destroy|
+|Building the two Kuberentes AMIs in the Packer VPC|~08:00: min each|
+|Creating and destroying the Kubernetes VPC|~02:30 min: Build<br/>~01:00 min: Destroy|
 
+After the two AMIs are built and stored in AWS, you will only need to *Create and destroy the Kubernetes VPC*, unless you want to make changes to the AMIs. 
 
 ## Costs
 
 My AWS costs for the month I was building (~10 times) the VPCs and resources cost me approximately $5(USD). This does not include the cost of storing the AMIs or running the AWS resources for extended periods of time. Of course your costs may vary. From my perspective, investing in my career and devlopment is definitely worth the cost of a couple of lattes at my favorite café. Remember to destroy your VPCs when not in use. 
+
+
+### Keep costs down
+
+Things to remember to keep costs down:
+* Delete the Snapshots for the AMI images after de-registering the AMIs. They do not get deleted automatically.
+* Destroy the VPCs with Terraform when not in use. 
 
 
 # About IPv6 in this environment

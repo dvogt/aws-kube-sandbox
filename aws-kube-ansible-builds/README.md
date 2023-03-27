@@ -29,8 +29,6 @@ Destroy the Vagrant box. The pupose was to make sure that Ansible would build co
 
 ## Build with Packer and store on AWS
    * Create the Packer AWS VPC. See https://github.com/dvogt/aws-cube/aws-kube-tf-packer/README.md
-   *  Get the `vpc_id` and `subnet_id` from AWS for Packer VPC in AWS
-      * Update `vpc_id` and `subnet_id` in the `aws-kube-shared/var.pkr.hcl` file
    * cd to the build folder you want to build in AWS
      * For example: `aws-kube-ansible-builds/builds/kube-control`
    * Run packer commands (optional but advised):
@@ -49,10 +47,9 @@ Destroy the Vagrant box. The pupose was to make sure that Ansible would build co
 
 # Notes
 
-* `kubeadm init` is run manually on the AWS instance after it has been dpelyed into your environment. This is is because the credentials are tied to the IP of the instance
-* `calico.sh` is run manully because it needs `kubeadmn init` to be run first. At the time of this writing it was difficult to know when kubeadmin was ready so it was not run automatically after `kubeadm init`
-
-
+* `kubeadm init` is run manually on the AWS instance after it has been deployed into your environment. This is is because the credentials are tied to the IP of the instances.
+* `calico.sh` is run manully because it needs `kubeadmn init` to be run first. At the time of this writing it was difficult to know when kubeadmin was ready so it was not run automatically after `kubeadm init`.
+* Delete the 
 
 # Packages
 
