@@ -35,7 +35,8 @@ These are designed to used in the order the appear in the table below.
 
 * Make sure you have a publically routable IPv6 on your workstation (see [About IPv6](#about-ipv6-in-this-environment) below). 
 * Add your public SSH key in *~/.ssh/id_rsa.pub*. This public key is added to your AMIs to log in to. 
-* Add your [shared AWS credential file](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#shared-configuration-and-credentials-files) at *~/.aws/credentials*. This allows Terraform to build your environment in AWS.  
+
+* Add your [shared AWS credential file](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#shared-configuration-and-credentials-files) at ~home/.aws/credentials. This allows Terraform to build your environment in AWS.  
 
   ```
     [default]
@@ -52,11 +53,9 @@ These are designed to used in the order the appear in the table below.
    * Note: The AWS AMI images are stored on AWS even after the VPCs are destroyed.
 * All AWS instances are reachable from a single bastion host.
 
-
 # Out of Scope parameters
 * Redundancy of the environment. 
 * More to come.
- 
 
 # Features
 
@@ -111,17 +110,16 @@ Once your workspace environment is setup, you can generally be up and running in
 
 After the two AMIs are built and stored in AWS, you will only need to *Create and destroy the Kubernetes VPC*, unless you want to make changes to the AMIs. 
 
-
 ## Costs
 
 My AWS costs for the month I was building (~10 times) the VPCs and resources cost me approximately $5(USD). This does not include the cost of storing the AMIs or running the AWS resources for extended periods of time. Of course your costs may vary. From my perspective, investing in my career and devlopment is definitely worth the cost of a couple of lattes at my favorite café. Remember to destroy your VPCs when not in use. 
+
 
 ### Keep costs down
 
 Things to remember to keep costs down:
 * Delete the Snapshots for the AMI images after de-registering the AMIs. They do not get deleted automatically.
 * Destroy the VPCs with Terraform when not in use. 
-
 
 
 # About IPv6 in this environment
@@ -157,5 +155,6 @@ I was initially setting up this environment for myself. I also wanted to get exp
 # Reference Diagram for AWS Kube Cluster
 
 * [AWS-Kubernets-Design-Arch.png](AWS-Kubernets-Design-Arch.png)
+
 
 
