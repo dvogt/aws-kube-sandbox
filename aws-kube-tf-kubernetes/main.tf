@@ -64,6 +64,8 @@ module "bastion" {
   bastion_instance_type           = var.bastion_instance_type
   ingress_ip_v6                   = local.ingress_ip_v6
   ingress_ip_v4                   = local.ingress_ip_v4
+  cidr_kube_workers               = var.cidr_kube_workers
+  # sg_kub_workers                  = module.kub-workers.sg_kub_workers
 }
 
 

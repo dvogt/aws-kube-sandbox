@@ -28,7 +28,7 @@ resource "aws_subnet" "sn_kub_workers" {
 
 
   tags = {
-    Name = "${var.project_name}-kub"
+    Name = "${var.project_name}-kub-workers"
   }
 }
 

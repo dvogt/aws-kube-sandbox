@@ -13,6 +13,15 @@ resource "aws_security_group" "sg_bastion" {
   }
 
   ingress {
+    description = "ICMP from kub workers security group"
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    # security_groups = [var.sg_kub_workers]
+    cidr_blocks = [var.cidr_kube_workers]
+  }
+
+  ingress {
     description = "SSH from your workstation using IPv4"
     from_port   = 22
     to_port     = 22
@@ -52,6 +61,7 @@ resource "aws_security_group" "sg_bastion" {
     protocol         = "-1"
     ipv6_cidr_blocks = ["::/0"]
   }
+
   tags = {
     Name = "${var.project_name} bastion"
   }

@@ -34,12 +34,10 @@ variable "aws_subnet_bastion" {
   default = ""
 }
 
-
 variable "ssh_key" {
   type    = string
   default = ""
 }
-
 
 variable "bastion_instance_type" {
   type    = string
@@ -51,3 +49,12 @@ variable "bastion_disable_api_termination" {
   default = ""
 }
 
+variable "sg_kub_workers" {
+  type    = string
+  default = ""
+}
+
+variable "cidr_kube_workers" {
+  type    = string
+  default = ""
+}
