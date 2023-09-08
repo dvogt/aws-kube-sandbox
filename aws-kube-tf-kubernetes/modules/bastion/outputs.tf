@@ -11,6 +11,6 @@ output "bastion_ipv6" {
   value = aws_instance.bastion.ipv6_addresses
 }
 
-output "sg_bastion" {
+output "sg_bastion_id" {
   value = aws_security_group.sg_bastion.id
 }

@@ -146,7 +146,7 @@ resource "aws_default_security_group" "packer" {
 #   to_port           = 22
 #   protocol          = "tcp"
 #   type              = "ingress"
-#   #source_security_group_id = var.bastion_security_groups
+#   #source_security_group_id = var.sg_bastion_id
 # }
 
 
@@ -157,7 +157,7 @@ resource "aws_default_security_group" "packer" {
 #   to_port           = -1
 #   protocol          = "icmp"
 #   type              = "ingress"
-#   # source_security_group_id = var.bastion_security_groups
+#   # source_security_group_id = var.sg_bastion_id
 # }
 
 

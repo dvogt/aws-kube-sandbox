@@ -65,7 +65,7 @@ module "bastion" {
   ingress_ip_v6                   = local.ingress_ip_v6
   ingress_ip_v4                   = local.ingress_ip_v4
   cidr_kube_workers               = var.cidr_kube_workers
-  # sg_kub_workers                  = module.kub-workers.sg_kub_workers
+  sg_kub_workers_id               = module.kub-workers.sg_kub_workers_id
 }
 
 
@@ -80,7 +80,7 @@ module "kub-workers" {
   # Module Specific Vars
   kube_worker_ami          = data.aws_ami.kube_worker_ami.id
   kube_controller_ami      = data.aws_ami.kube_controller_ami.id
-  bastion_security_groups  = module.bastion.sg_bastion
+  sg_bastion_id            = module.bastion.sg_bastion_id
   kub_worker_instance_type = var.kub_worker_instance_type
   kube_workers_ips         = var.kube_workers_ips
   kube_controller_ip       = var.kube_controller_ip

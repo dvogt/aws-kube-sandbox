@@ -49,7 +49,7 @@ variable "bastion_disable_api_termination" {
   default = ""
 }
 
-variable "sg_kub_workers" {
+variable "sg_kub_workers_id" {
   type    = string
   default = ""
 }
