@@ -57,7 +57,7 @@ variable "kub_worker_instance_type" {
 #   type = list(any)
 # }
 
-variable "bastion_security_groups" {
+variable "sg_bastion_id" {
   type    = string
   default = ""
 }

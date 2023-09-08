@@ -1,4 +1,9 @@
 
+variable "module_name" {
+  type    = string
+  default = "bastion"
+}
+
 variable "region" {
   type    = string
   default = ""

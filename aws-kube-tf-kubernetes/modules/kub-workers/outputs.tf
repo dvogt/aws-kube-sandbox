@@ -6,6 +6,6 @@ output "kub_controller_private_ip" {
   value = aws_instance.kub_controller.private_ip
 }
 
-output "sg_kub_workers" {
+output "sg_kub_workers_id" {
   value = aws_security_group.sg_kub_workers.id
 }
