@@ -1,22 +1,24 @@
 
-# How to build images
+# How to build the images for AWS
 
-## Build images locally with Vagrant first for testing
-   * cd to the build directory you want to test with Vagrant
+## Summary
+The best way to ensure repeatability is to build your images.  \
+The cost for storing images is less than one cup of coffee at your local BlueBucks coffee shop.
+
+## Build Kubernetes cluster images locally with Vagrant for testing
+   * cd to the build directory on your local system.
       * For example: `cd builds/kube-worker`
    * *Run:* `vagrant up`
    * Make sure there are no errors
    * If necessary ssh and debug Vagrant image: `vagrant ssh`
    * Make changes to the `roles/<build directory>`
    * If necessary rerun provision: `vagrant provision`
-   * Once there are no errors go to **Build with packer**
-
 
 ### Extra steps after building the Contorller node with Vagrant
 1. `ssh vagrant`
 2. As the ubuntu user run: `./kubeadm.sh`
    * Make sure it runs without errors
-     * You should something like: `kubeadm join 10.0.2.15:6443 ...`
+     * You should see something like: `kubeadm join 10.0.2.15:6443 ...`
 3. As the ubuntu user run: ./calico.sh
    * Make sure it runs without errors
      * You should something like: `kubeadm join 10.0.2.15:6443 ...`
@@ -27,8 +29,10 @@ Destroy the Vagrant box. The pupose was to make sure that Ansible would build co
 * `exit` from you vagrant box if you haven't already done so
 * *Run:* `vagrant destroy`
 
+
 ## Build with Packer and store on AWS
-   * Create the Packer AWS VPC. See https://github.com/dvogt/aws-cube/aws-kube-tf-packer/README.md
+   * Assuming that there were no error with the steps above, continue with the following steps.
+   * [Create the Packer AWS VPC](https://github.com/dvogt/aws-kube-sandbox/blob/main/aws-kube-tf-packer/README.md)
    * cd to the build folder you want to build in AWS
      * For example: `aws-kube-ansible-builds/builds/kube-control`
    * Run packer commands (optional but advised):
@@ -39,10 +43,11 @@ Destroy the Vagrant box. The pupose was to make sure that Ansible would build co
       * *Example:* `packer build -var-file="../../../aws-kube-shared/vars.pkr.hcl" aws-ubuntu-kube-control.pkr.hcl`
       * **NOTE:** A `packer.sh` has been included in the directory to simplify this. 
          * *Run:* `./packer.sh`
+   * **Reminder:** `cd` back to `aws-kube-tf-packer/` and run [`tf destory`](https://github.com/dvogt/aws-kube-sandbox/blob/main/aws-kube-tf-packer/README.md)
 
 ## Next Step
 
-1. Follow the instructions at https://github.com/dvogt/aws-cube/aws-kube-tf-kubernetes/README.md
+1. Follow the instructions at https://github.com/dvogt/aws-kube-sandbox/blob/main/aws-kube-tf-kubernetes/README.md
 
 
 # Notes
