@@ -1,6 +1,6 @@
 # About aws-kube development sandbox
 
-This is a [development sandbox](https://en.wikipedia.org/wiki/Sandbox_(software_development)) for deployment and testing of a simplified native Kubernetes cluster using EC2 images in AWS. This is used for development purposes. For simplicity and to keep costs down it only uses services that are essential for setting up and managing a Kubernetes cluster. There is an emphais on bulding the infrastructure platform to build the Kuberentes cluster.
+This is a [development sandbox](https://en.wikipedia.org/wiki/Sandbox_(software_development)) for deployment and testing of a simplified native Kubernetes cluster using EC2 images in AWS. This is used for development purposes. For simplicity and to keep costs down it only uses services that are essential for setting up and managing a Kubernetes cluster. There is an emphasis on building the infrastructure platform to build the Kubernetes cluster.
 
 There are three distinct technologies that are used:
 * **Vagrant**: to test images that will be deployed to AWS.
