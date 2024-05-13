@@ -162,7 +162,7 @@ I was initially setting up this environment for myself. I also wanted to get exp
 
 # Reference Diagram for AWS Kube Cluster
 
-* [AWS-Kubernets-Design-Arch.png](AWS-Kubernets-Design-Arch.png)
+![](./AWS-Kubernets-Design-Arch.png)
 
 
 
