@@ -1,7 +1,7 @@
 
 # Elastic IP resource
 resource "aws_eip" "sn_nat_eip" {
-  vpc = true
+  domain = "vpc"
 }
 
 resource "aws_nat_gateway" "sn_nat_gw" {

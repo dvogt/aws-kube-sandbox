@@ -1,28 +1,28 @@
 # This file would normally go in roles/<role name>/vars/main.yml
-# Ansible will automatically look in that file to get the vars. 
-# Since the Var file is shared, it is in the aws-kube-shared directory. 
-docker_apt_repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu jammy stable"
+# Ansible will automatically look in that file to get the vars.
+# Since the Var file is shared, it is in the aws-kube-shared directory.
+docker_apt_repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu noble stable"
 kube_apt_repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
 kube_pod_cidr: "192.168.0.0/16"
 kube_version: "1.26.3"
 kube_package_version: "1.26.3-00"
 
-kube_packages: 
-- kubeadm
-- kubelet
-- kubectl
+kube_packages:
+  - kubeadm
+  - kubelet
+  - kubectl
 
 base_packages:
-- apt-transport-https
-- ca-certificates
-- curl
-- gnupg
-- lsb-release
-- acl
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+  - acl
 
 docker_packages:
-- docker-ce
-- docker-ce-cli
-- containerd.io
-- docker-buildx-plugin 
-- docker-compose-plugin
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin

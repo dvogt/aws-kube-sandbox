@@ -16,10 +16,9 @@ output "general_ingress_ip_v6" {
   value = local.ingress_ip_v6
 }
 
-output "general_ingress_ip_v4" {
-  value = local.ingress_ip_v4
-
-}
+# output "general_ingress_ip_v4" {
+#   value = local.ingress_ip_v4
+# }
 # output "aws_internet_gateway" {
 #   value = module.network.aws_internet_gateway
 # }
@@ -45,7 +44,7 @@ output "bastion_private_ip" {
 }
 
 output "bastion_ipv6" {
-  value = module.bastion.bastion_ipv6
+  value = "ssh ubuntu@${module.bastion.bastion_ipv6[0]}"
 }
 
 

@@ -13,21 +13,23 @@ resource "aws_default_security_group" "packer" {
   vpc_id = aws_vpc.packer.id
   #name   = "aws-kube-packer-sg"
 
-  ingress {
-    description = "ICMP from VPC ipv4"
-    from_port   = -1
-    to_port     = -1
-    protocol    = "icmp"
-    cidr_blocks = [var.ingress_ip_v4]
-  }
+  # UNCOMMENT FOR IPV4
+  # ingress {
+  #   description = "ICMP from VPC ipv4"
+  #   from_port   = -1
+  #   to_port     = -1
+  #   protocol    = "icmp"
+  #   cidr_blocks = [var.ingress_ip_v4]
+  # }
 
-  ingress {
-    description = "SSH from VPC"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.ingress_ip_v4]
-  }
+  # UNCOMMENT FOR IPV4
+  # ingress {
+  #   description = "SSH from VPC"
+  #   from_port   = 22
+  #   to_port     = 22
+  #   protocol    = "tcp"
+  #   cidr_blocks = [var.ingress_ip_v4]
+  # }
 
   ingress {
     description      = "SSH from your workstation IPv6"

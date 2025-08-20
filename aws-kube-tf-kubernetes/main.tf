@@ -1,10 +1,14 @@
 terraform {
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
+      source = "hashicorp/aws"
+      # version = "~> 4.67"
+      version = "~> 5.97.0"
     }
   }
+
+  #required_version = ">= 1.5.7"
+  required_version = ">= 1.11"
 }
 
 
@@ -18,9 +22,9 @@ provider "aws" {
 
 # ----------------------------
 # Get my IPv4 address
-data "external" "getmyipv4" {
-  program = ["sh", "-c", "echo '{ \"myipv4\": \"'$(curl -S ipv4.icanhazip.com)'/32\" }'"]
-}
+# data "external" "getmyipv4" {
+#   program = ["sh", "-c", "echo '{ \"myipv4\": \"'$(curl -S ipv4.icanhazip.com)'/32\" }'"]
+# }
 
 # -----------------------------
 # Get my IPv6 address
@@ -30,7 +34,8 @@ data "external" "getmyipv6" {
 
 locals {
   ingress_ip_v6 = data.external.getmyipv6.result["myipv6"]
-  ingress_ip_v4 = data.external.getmyipv4.result["myipv4"]
+  # UNCOMMENT FOR IPV4
+  # ingress_ip_v4 = data.external.getmyipv4.result["myipv4"]
 }
 # -----------------------------
 
@@ -46,7 +51,8 @@ module "network" {
   cidr_bastion      = var.cidr_bastion
   cidr_kube_workers = var.cidr_kube_workers
   ingress_ip_v6     = local.ingress_ip_v6
-  ingress_ip_v4     = local.ingress_ip_v4
+  # UNCOMMENT FOR IPV4
+  # ingress_ip_v4     = local.ingress_ip_v4
 }
 
 module "bastion" {
@@ -63,9 +69,10 @@ module "bastion" {
   aws_subnet_bastion              = module.network.sn_bastion
   bastion_instance_type           = var.bastion_instance_type
   ingress_ip_v6                   = local.ingress_ip_v6
-  ingress_ip_v4                   = local.ingress_ip_v4
-  cidr_kube_workers               = var.cidr_kube_workers
-  sg_kub_workers_id               = module.kub-workers.sg_kub_workers_id
+  # UNCOMMENT FOR IPV4
+  # ingress_ip_v4                   = local.ingress_ip_v4
+  cidr_kube_workers = var.cidr_kube_workers
+  sg_kub_workers_id = module.kub-workers.sg_kub_workers_id
 }
 
 

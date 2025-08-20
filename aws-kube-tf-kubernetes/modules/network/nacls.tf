@@ -20,14 +20,15 @@ resource "aws_network_acl" "bastion" {
   }
 
   # Allow SSH from remote client with specific ipv4 address
-  ingress {
-    rule_no    = 110
-    action     = "allow"
-    cidr_block = var.ingress_ip_v4
-    protocol   = "tcp"
-    from_port  = 22
-    to_port    = 22
-  }
+  # UNCOMMENT FOR IPV4
+  # ingress {
+  #   rule_no    = 110
+  #   action     = "allow"
+  #   cidr_block = var.ingress_ip_v4
+  #   protocol   = "tcp"
+  #   from_port  = 22
+  #   to_port    = 22
+  # }
 
   # Allow icmp from anywhere ipv4
   ingress {
