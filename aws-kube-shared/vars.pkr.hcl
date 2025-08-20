@@ -13,7 +13,8 @@ ssh_username = "ubuntu"
 
 # AMI Image to pull from is the name of the image. 
 # This image may be in different regions but will have differfent AMI IDs
-ami_image_to_pull_from = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
+# ami_image_to_pull_from = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
+ami_image_to_pull_from = "ubuntu/images/hvm-ssd/ubuntu-noble-24.04-amd64-server-*"
 
 # Region where the image will be built
 region = "us-east-1"

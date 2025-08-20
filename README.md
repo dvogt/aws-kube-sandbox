@@ -1,3 +1,14 @@
+# Summary
+
+This was created to build a simplified Kubernetes non-production cluster to see how it works (under the hood) while keep costs down.
+There are many YouTube videos the regurgitate the same manual steps. 
+This is an attempt at automating the process with only a few manual steps and have a simple Kubernetes cluster up and running. Once the images are created and stored in AWS, it only takes a couple of minutes (see [Timing](#timing) section below) to create a new cluster. 
+
+For reference, sites like the following were used as a template for building the automation here:
+* https://phoenixnap.com/kb/install-kubernetes-on-ubuntu
+* https://www.cherryservers.com/blog/install-kubernetes-ubuntu
+
+
 # About aws-kube development sandbox
 
 This is a [development sandbox](https://en.wikipedia.org/wiki/Sandbox_(software_development)) for deployment and testing of a simplified native Kubernetes cluster using EC2 images in AWS. This is used for development purposes. For simplicity and to keep costs down it only uses services that are essential for setting up and managing a Kubernetes cluster. There is an emphasis on building the infrastructure platform to build the Kubernetes cluster.
@@ -13,6 +24,7 @@ This was originally developed to:
 * Have an environemnt could be spun up and destroyed quickly.
 * Minimize expenses running resources in AWS. 
 * Eventually integrate a CI/CD pipelnie deploy to apps on the Kubernetes cluster.
+
 
 # Features
 
@@ -97,6 +109,7 @@ I am listing exact versions that were used to build this enviroment.
 |Kubernetes packages|kubeadm=1.26.3-00<br/>kubelet=1.26.3-00<br/>kubectl=1.26.3-00|
 |Docker packges||
 
+
 # Costs and Timing
 
 ## Timing
@@ -123,7 +136,6 @@ My AWS costs for the month I was building (~10 times) the VPCs and resources cos
 Things to remember to keep costs down:
 * Delete the Snapshots for the AMI images after de-registering the AMIs. They do not get deleted automatically.
 * Destroy the VPCs with Terraform when not in use. 
-
 
 # About IPv6 in this environment
 

@@ -45,7 +45,7 @@ resource "aws_instance" "kub_worker" {
   connection {
     # The default username for our AMI
     user = "ubuntu"
-
+    host = ""
     # The connection will use the local SSH agent for authentication.
   }
 

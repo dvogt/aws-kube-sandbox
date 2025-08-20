@@ -42,19 +42,20 @@ resource "aws_vpc_security_group_ingress_rule" "ingress_ssh_kub_sg" {
   }
 }
 
-resource "aws_vpc_security_group_ingress_rule" "ingress_ipv4_ssh_client" {
-  description       = "SSH from your workstation using IPv6"
-  security_group_id = aws_security_group.sg_bastion.id
+# UNCOMMENT FOR IPV4
+# resource "aws_vpc_security_group_ingress_rule" "ingress_ipv4_ssh_client" {
+#   description       = "SSH from your workstation using IPv6"
+#   security_group_id = aws_security_group.sg_bastion.id
 
-  cidr_ipv4   = var.ingress_ip_v4
-  ip_protocol = "tcp"
-  from_port   = 22
-  to_port     = 22
+#   cidr_ipv4   = var.ingress_ip_v4
+#   ip_protocol = "tcp"
+#   from_port   = 22
+#   to_port     = 22
 
-  tags = {
-    Name = "${var.project_name} ${var.module_name}"
-  }
-}
+#   tags = {
+#     Name = "${var.project_name} ${var.module_name}"
+#   }
+# }
 
 resource "aws_vpc_security_group_ingress_rule" "ingress_ipv6_ssh_client" {
   description       = "SSH from your workstation using IPv6"
@@ -84,19 +85,20 @@ resource "aws_vpc_security_group_ingress_rule" "ingress_ipv6_icmp_client" {
   }
 }
 
-resource "aws_vpc_security_group_ingress_rule" "ingress_ipv4_icmp_client" {
-  description       = "ingress_icmp_client"
-  security_group_id = aws_security_group.sg_bastion.id
+# UNCOMMENT FOR IPV4
+# resource "aws_vpc_security_group_ingress_rule" "ingress_ipv4_icmp_client" {
+#   description       = "ingress_icmp_client"
+#   security_group_id = aws_security_group.sg_bastion.id
 
-  cidr_ipv4   = var.ingress_ip_v4
-  ip_protocol = "icmp"
-  from_port   = -1
-  to_port     = -1
+#   cidr_ipv4   = var.ingress_ip_v4
+#   ip_protocol = "icmp"
+#   from_port   = -1
+#   to_port     = -1
 
-  tags = {
-    Name = "${var.project_name} ${var.module_name}"
-  }
-}
+#   tags = {
+#     Name = "${var.project_name} ${var.module_name}"
+#   }
+# }
 
 ########################################################################
 ########################## EGRESS RULES#################################
