@@ -22,7 +22,6 @@
 
 - name: Add docker apt repo
   apt_repository:
-    # repo: "{{ docker_apt_repo }} {{ ansible_lsb.codename }} stable"
     repo: "{{ docker_apt_repo }}"
     state: present
     filename: docker
@@ -76,14 +75,12 @@
   command: systemctl mask swap.target
 
 - name: Create containerd config dir
-  # become: yes
   become_method: sudo
   file:
     path: /etc/containerd
     state: directory 
 
 - name: Create conatinerd conifg file
-  # become: yes
   become_method: sudo
   template:
     src: containerd.config.toml
