@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sudo kubeadm init --pod-network-cidr {{ kube_pod_cidr }} --kubernetes-version {{ kube_version }}
+sudo kubeadm init --pod-network-cidr {{ kube_pod_cidr }} --kubernetes-version {{ kube_adm_version }}
 
 sudo cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
 sudo chown ubuntu:ubuntu /home/ubuntu/.kube/config

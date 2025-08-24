@@ -8,10 +8,11 @@ docker_apt_key_ring: "/etc/apt/keyrings/docker.gpg"
 docker_apt_repo: "deb [signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable"
 
 kube_version: "1.33"
+kube_adm_version: "1.33.4"
 kube_package_version: "1.33.0-*"
 kube_apt_key_url: "https://pkgs.k8s.io/core:/stable:/v{{ kube_version }}/deb/Release.key"
 kube_apt_key_ring: "/etc/apt/keyrings/kubernetes-apt-keyring.gpg"
-kube_apt_repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /"
+kube_apt_repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v{{ kube_version }}/deb/ /"
 
 kube_pod_cidr: "192.168.0.0/16"
 

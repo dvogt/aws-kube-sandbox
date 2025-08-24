@@ -14,7 +14,7 @@ variable "ssh_username" {
 }
 
 # AMI Image to pull from is the name of the image. 
-# This image may be in different regions but will have differfent AMI IDs
+# This image may be in different regions but will have different AMI IDs
 variable "ami_image_to_pull_from" {
   type = string
 }
@@ -46,6 +46,10 @@ packer {
       version = ">= 0.0.2"
       source  = "github.com/hashicorp/amazon"
     }
+    ansible = {
+      version = "~> 1"
+      source = "github.com/hashicorp/ansible"
+    }
   }
 }
 
@@ -67,20 +71,21 @@ source "amazon-ebs" "kube_control" {
   ssh_username = var.ssh_username
 
   # VPC filter
+  # Get the VPC for var.project_anme
   vpc_filter {
     filters = {
       "tag:Name" = "${var.project_name}"
     }
   }
 
-  # Subnet filter
+  # Get the Subnet for  ar.project_anme
   subnet_filter {
     filters = {
       "tag:Name" = "${var.project_name}"
     }
   }
 
-  # This prevents packer from creating a a temporary security group that is too permissive
+  # This prevents packer from creating a temporary security group that is too permissive
   security_group_filter {
     filters = {
       "tag:Name" = "${var.project_name}"
