@@ -1,11 +1,19 @@
 # This file would normally go in roles/<role name>/vars/main.yml
 # Ansible will automatically look in that file to get the vars.
 # Since the Var file is shared, it is in the aws-kube-shared directory.
-docker_apt_repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu noble stable"
-kube_apt_repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+
+docker_apt_key_url: "https://download.docker.com/linux/ubuntu/gpg"
+docker_apt_key_ring: "/etc/apt/keyrings/docker.gpg"
+# deb_arch: "{{ 'arm64' if ansible_architecture in ['aarch64','arm64'] else 'amd64' }}"
+docker_apt_repo: "deb [signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable"
+
+kube_version: "1.33"
+kube_package_version: "1.33.0-*"
+kube_apt_key_url: "https://pkgs.k8s.io/core:/stable:/v{{ kube_version }}/deb/Release.key"
+kube_apt_key_ring: "/etc/apt/keyrings/kubernetes-apt-keyring.gpg"
+kube_apt_repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /"
+
 kube_pod_cidr: "192.168.0.0/16"
-kube_version: "1.26.3"
-kube_package_version: "1.26.3-00"
 
 kube_packages:
   - kubeadm

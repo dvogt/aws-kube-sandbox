@@ -2,8 +2,11 @@
 # How to build the images for AWS
 
 ## Summary
-The best way to ensure repeatability is to build your images.  \
-The cost for storing images is less than one cup of coffee at your local BlueBucks coffee shop.
+This is used build the AMI images. \
+Vagrant will ge the Ubuntu image and install the Kubernetes binaries for the workers and controllers. The binaries are installed using Ansible playbooks.
+
+The best way to ensure repeatability is to build your own images.  \
+The cost for storing images per month is less than one cup of coffee at your local BlueBucks coffee shop.
 
 ## Build Kubernetes cluster images locally with Vagrant for testing
    * cd to the build directory on your local system.

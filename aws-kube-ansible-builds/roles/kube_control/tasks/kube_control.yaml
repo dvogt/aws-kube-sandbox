@@ -6,35 +6,37 @@
 - name: Install base packages
   apt:
     name: "{{ item }}"
-  with_items: "{{ base_packages }}"
+  loop: "{{ base_packages }}"
   
 - name: Install docker keyring
   apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    keyring: /etc/apt/keyrings/docker.gpg
+    url: "{{ docker_apt_key_url }}"
+    keyring: "{{ docker_apt_key_ring }}"
     state: present  
 
-- name: Install apt keyring
+- name: Install kubernetes keyring
   apt_key:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    url: "{{ kube_apt_key_url }}"
+    keyring: "{{ kube_apt_key_ring }}"
     state: present  
 
 - name: Add docker apt repo
   apt_repository:
+    # repo: "{{ docker_apt_repo }} {{ ansible_lsb.codename }} stable"
     repo: "{{ docker_apt_repo }}"
     state: present
-    filename: 
+    filename: docker
     
 - name: Add kubernetes apt repo
   apt_repository:
     repo: "{{ kube_apt_repo }}"
     state: present
-    filename: 
+    filename: kubernetes
 
 - name: Install docker packages
   apt:
     name: "{{ item }}"
-  with_items: "{{ docker_packages }}"
+  loop: "{{ docker_packages }}"
 
 - name: Adding user 'ubuntu' to group docker
   user:
@@ -74,14 +76,14 @@
   command: systemctl mask swap.target
 
 - name: Create containerd config dir
-  become: yes
+  # become: yes
   become_method: sudo
   file:
     path: /etc/containerd
     state: directory 
 
 - name: Create conatinerd conifg file
-  become: yes
+  # become: yes
   become_method: sudo
   template:
     src: containerd.config.toml
@@ -103,7 +105,7 @@
 - name: Install kube packages
   apt:
     name: "{{ item }}={{ kube_package_version }}"
-  with_items: "{{ kube_packages }}"
+  loop: "{{ kube_packages }}"
 
 - name: apt-mark hold kubeadm
   dpkg_selections:
@@ -128,7 +130,7 @@
 #   register: kubeadm_init
 
 - name: Create /home/ubuntu/.kube dir
-  become: yes
+  # become: yes
   become_method: sudo
   file:
     path: /home/ubuntu/.kube
