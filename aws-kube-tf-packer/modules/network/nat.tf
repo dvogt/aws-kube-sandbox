@@ -11,5 +11,7 @@ resource "aws_nat_gateway" "sn_nat" {
   tags = {
     Name = var.project_name
   }
+
+  depends_on = [aws_internet_gateway.packer_ig]
 }
 

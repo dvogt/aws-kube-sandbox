@@ -157,6 +157,17 @@ resource "aws_vpc_security_group_egress_rule" "egress_all_kub_sg" {
   }
 }
 
+# ENDPOINT fix
+resource "aws_vpc_endpoint" "ssm" {
+  # This is allow SSM to work without IPv4
+  vpc_id              = var.aws_vpc_id
+  service_name        = "com.amazonaws.us-east-1.ssm"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = [var.sn_kub_workers]
+  security_group_ids  = [aws_security_group.sg_kub_workers.id]
+  private_dns_enabled = true
+}
+
 # resource "aws_vpc_security_group_egress_rule" "egress_ipv4_all" {
 #   description       = "egress_ipv4_all"
 #   security_group_id = aws_security_group.sg_kub_workers.id

@@ -35,7 +35,7 @@ variable "instance_type" {
 }
 
 locals {
-  today = formatdate("YYYY-MM-DD", timestamp())
+  today = formatdate("YYYY-MM-DD-HH.mm", timestamp())
 }
 
 # -----------------------------
@@ -118,7 +118,7 @@ build {
   # The ansible playbook. 
   # This  playbook references the shared Ansible files
   provisioner "ansible" {
-    playbook_file = "kube-control.yml"
+    playbook_file = "kube-control.ansible.yml"
     use_proxy     = false
   }
 }

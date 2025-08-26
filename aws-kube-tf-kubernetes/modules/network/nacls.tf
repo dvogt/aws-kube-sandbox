@@ -270,7 +270,7 @@ resource "aws_network_acl" "kub_workers" {
   # Allow ephemeral ports ipv6 from anywhere
   # This is useful for downloading updates.
   ingress {
-    rule_no         = 150
+    rule_no         = 50
     action          = "allow"
     ipv6_cidr_block = "::/0"
     protocol        = "tcp"
@@ -279,6 +279,16 @@ resource "aws_network_acl" "kub_workers" {
   }
 
   ########## ALLOW EGRESS RULES ##########
+
+# Allow ephemeral port ipv6 to anywhere
+  egress {
+    rule_no         = 150
+    action          = "allow"
+    ipv6_cidr_block = "::/0"
+    protocol        = "tcp"
+    from_port       = 443
+    to_port         = 443
+  }
 
   # Allow ipv4 pings to anywhere
   egress {

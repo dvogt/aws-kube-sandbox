@@ -44,7 +44,7 @@ output "bastion_private_ip" {
 }
 
 output "bastion_ipv6" {
-  value = "ssh ubuntu@${module.bastion.bastion_ipv6[0]}"
+  value = "ssh -A ubuntu@${module.bastion.bastion_ipv6[0]}"
 }
 
 

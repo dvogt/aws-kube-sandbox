@@ -104,6 +104,7 @@
     name: "{{ item }}={{ kube_package_version }}"
   loop: "{{ kube_packages }}"
 
+# the three apt-mark be done as one 
 - name: apt-mark hold kubeadm
   dpkg_selections:
     name: kubeadm
@@ -136,9 +137,13 @@
     group: ubuntu
     mode: '0755'
 
+- name: Pull kubeadmin images
+  become_method: sudo
+  command: kubeadm config images pull
+
 - name: kubeadm shell script
   template:
-    src: kubeadm.sh.j2
+    src: kubeadm.sh
     dest: /home/ubuntu/kubeadm.sh
     owner: ubuntu
     group: ubuntu
@@ -147,7 +152,7 @@
 - name: Calico yaml file
   template:
     src: calico.yaml
-    # https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
+    # https://raw.githubusercontent.com/projectcalico/calico/v3.33.0/manifests/calico.yaml
     dest: /home/ubuntu/calico.yaml
     owner: ubuntu
     group: ubuntu
@@ -164,3 +169,6 @@
     mode: '0755'
 
 
+- name: install  aws-cli --classic
+  become_method: sudo
+  command: snap install aws-cli --classic

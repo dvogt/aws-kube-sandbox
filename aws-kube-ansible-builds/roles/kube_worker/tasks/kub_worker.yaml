@@ -118,3 +118,15 @@
   dpkg_selections:
     name: kubectl
     selection: hold 
+
+- name: join cluster shell script
+  template:
+    src: join_cluster.sh
+    dest: /home/ubuntu/join_cluster.sh
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: install  aws-cli --classic
+  become_method: sudo
+  command: snap install aws-cli --classic

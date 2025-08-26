@@ -36,7 +36,6 @@ Destroy the Vagrant box. The pupose was to make sure that Ansible would build co
 ## Build with Packer and store on AWS
    * Assuming that there were no error with the steps above, continue with the following steps.
    * [Create the Packer AWS VPC](https://github.com/dvogt/aws-kube-sandbox/blob/main/aws-kube-tf-packer/README.md)
-   * Use the `vpc_id` and `subnet_id` and add them to the 
    * cd to the build folder you want to build in AWS
      * For example: `aws-kube-ansible-builds/builds/kube-control`
    * Run packer commands (optional but advised):
