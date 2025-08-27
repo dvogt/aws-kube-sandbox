@@ -55,9 +55,7 @@ Destroy the Vagrant box. The pupose was to make sure that Ansible would build co
 
 # Notes
 
-* `kubeadm init` is run manually on the AWS instance after it has been deployed into your environment. This is is because the credentials are tied to the IP of the instances.
-* `calico.sh` is run manully because it needs `kubeadmn init` to be run first. At the time of this writing it was difficult to know when kubeadmin was ready so it was not run automatically after `kubeadm init`.
-* Delete the 
+* `./kubeadm.sh` and `calico.sh` are run automatically during the deployment of Terraform.
 
 # Packages
 

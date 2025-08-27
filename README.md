@@ -1,8 +1,7 @@
 # Summary
 
-This was created to build a simplified Kubernetes non-production cluster to see how it works (under the hood) while keep costs down.
-There are many YouTube videos the regurgitate the same manual steps. 
-This is an attempt at automating the process with only a few manual steps and have a simple Kubernetes cluster up and running. Once the images are created and stored in AWS, it only takes a couple of minutes (see [Timing](#timing) section below) to create a new cluster. 
+This was created to build a simplified Kubernetes non-production cluster to see how it works (under the hood) while keeping costs down.
+This is an attempt at automating the processes (listed below) with minimal no manual steps to deploy a simple Kubernetes. Once the images are created and stored in AWS, it only takes a couple of minutes (see [Timing](#timing) section below) to create a new cluster. 
 
 For reference, sites like the following were used as a template for building the automation here:
 * https://phoenixnap.com/kb/install-kubernetes-on-ubuntu
@@ -11,10 +10,11 @@ For reference, sites like the following were used as a template for building the
 
 # About aws-kube development sandbox
 
-This is a [development sandbox](https://en.wikipedia.org/wiki/Sandbox_(software_development)) for deployment and testing of a simplified native Kubernetes cluster using EC2 images in AWS. This is used for development purposes. For simplicity and to keep costs down it only uses services that are essential for setting up and managing a Kubernetes cluster. There is an emphasis on building the infrastructure platform to build the Kubernetes cluster.
+This is a [development sandbox](https://en.wikipedia.org/wiki/Sandbox_(software_development)) for deployment and testing of a simplified native Kubernetes cluster using EC2 images in AWS. For simplicity and to keep costs down it only uses services that are essential for setting up and managing a Kubernetes cluster. 
 
-There are three distinct technologies that are used:
+The primary technologies used are:
 * **Vagrant**: to test images that will be deployed to AWS.
+* **Ansible**: to install packages on the Vagrant and AWS Images.
 * **Packer:** to build the images that will be deployed to AWS.
 * **Terraform:** to deploy your Kubernetes environment in AWS.
 
@@ -23,17 +23,19 @@ This was originally developed to:
 * Get experience with deploying and managing a Kubernetes cluster with a highly repeatable process.
 * Have an environemnt could be spun up and destroyed quickly.
 * Minimize expenses running resources in AWS. 
-* Eventually integrate a CI/CD pipelnie deploy to apps on the Kubernetes cluster.
+
+Future:
+* Integrate a CI/CD pipelnie deploy to apps on the Kubernetes cluster.
 
 
 # Features
 
 * **Kuberentes Cluster:**
-  * Play around with Kubernetes. 
+  * Play with Kubernetes. 
 * **AWS:**
   * Experience building evnironments in AWS using popular platform enigineering tools.
 * **Terraform:** to create two independent VPCs:
-  * One VPC to create AMI images.
+  * One VPC to create AMI images using Packer.
   * One VPC to create the Kubernetes cluster.
 * **Vagrant:**
   * To test images before building in AWS.
@@ -46,9 +48,9 @@ This was originally developed to:
 
 # Overview
 
-There are four directories used for different files and code.
+There are four directories used for different functions.
 Each of the diretories has it's own **README** file that gives specific instructions.
-These are designed to be used in the order the appear in the table below.
+These are designed to be used in the order they appear in the table below.
 
 |Step|Directory|Description|
 |---|---|--|
@@ -99,15 +101,15 @@ I am listing exact versions that were used to build this enviroment.
 
 |Software|Version|
 |---|---|
-|Vagrant|2.3.4|
-|Ansible|2.14.3|
+|Vagrant|2.4.9|
+|Ansible|2.18.8|
 |Packer|1.86|
 |Packer Amazon Plugin|0.0.2|
-|Terrform|1.4.2|
+|Terrform|1.12.2|
 |Vagrant Ubuntu Image|ubuntu/jammy64|
-|AWS Ubuntu Image|ubuntu-jammy-22.04-amd64-server-*|
-|Kubernetes packages|kubeadm=1.26.3-00<br/>kubelet=1.26.3-00<br/>kubectl=1.26.3-00|
-|Docker packges||
+|AWS Ubuntu Image|ubuntu-noble-24.04-amd64-server-*|
+|Kubernetes packages|kubeadm=1.33<br/>kubelet=1.33<br/>kubectl=1.33|
+
 
 
 # Costs and Timing
@@ -121,8 +123,8 @@ Once your workspace environment is setup, you can generally be up and running in
 |---|---|
 |Building the two test Vagrant builds|~03:30 min: Build<br/>~00:09 min: Destroy|
 |Creating and destroying the Packer VPC|~02:30 min: Build<br/>~01:00 min: Destroy|
-|Building the two Kuberentes AMIs in the Packer VPC|~08:00: min each|
-|Creating and destroying the Kubernetes VPC and cluster|**~02:30 min: Build**<br/>~01:00 min: Destroy|
+|Building the two Kuberentes AMIs in the Packer VPC|~10:00: min each|
+|Creating and destroying the Kubernetes VPC and cluster|**~04:00 min: Build**<br/>~04:00 min: Destroy|
 
 After the two AMIs are built and stored in AWS, you will only need to *Create and destroy the Kubernetes VPC and clsuter*.
 
@@ -142,15 +144,17 @@ Things to remember to keep costs down:
 I should probably write a blog about my full experience with this. 
 If you are lucky enough to have an Internet Service Provider that automatically provides you with routable IPv6, then you should be good to go. 
 
-It might be tempting to search Google for `What is my IP` to see if you are using IPv6. In some cases, Google will not provide your IPv6 address even though you may have an IPv6 address. For what it is worth, [whatismyipaddress.com](https://whatismyipaddress.com) will not provide your IPv6 address either. 
+
 
 The best way of seeing if you have an IPv6 address is to run: `curl -S ipv6.icanhazip.com` or going to http://ipv6.icanhazip.com. ipv6.icanhazip.com does not have an IPv4 DNS entry so don't expect it work if you are only using IPv4. Use http://ipv4.icanhazip.com if you want to see your IPv4 address.
 
+(https://whatismyipaddress.com) will also provide your IPv6 address.
+
 The provided Terraform code runs `curl -S ipv6.icanhazip.com` to get your IPv6 address and `curl -S ipv4.icanhazip.com` to get your IPv4 address. These IP addresses are used to limit access to you bastion hosts to those two IP addresses.
 
-## How to get an IPv6 address? 
+## How to get an IPv6 address if your Internet Service Provider does not 
 
-There are some VPN services that offer IPv6. Most of the popular VPNs don't offer IPv6. 
+There are some VPN services that offer IPv6. As of this wriring, many of the popular VPNs don't offer IPv6. 
 Here are a few VPNs that offer IPv6 in no paticular order:
 * [Hideme](hide.me)
 * [Perfect Privacy](www.perfect-privacy.com)
@@ -168,13 +172,13 @@ The scaffolding for IPv4 addresses exists in the Terraform code.
 Although untested, you should be able to any references to `ingress_ip_v6` in the Terraform code and comment them out. 
 
 
-## Backstory on using IpV6
+## Backstory on using IPv6
 
-I was initially setting up this environment for myself. I also wanted to get exposure to IPv6. At the time I was using Xfinity for my internet. Xfinity was using a NAT'd IPv6 on my router. I moved away from Xfinity and the new provider did not "support" IPv6. I wanted a quick way to keep working with IPv6 without having to fix the Terraform code at the time. 
+I was initially setting up this environment for myself and I also wanted to get exposure to IPv6. At the time I was using Xfinity for my internet. Xfinity was using a NAT'd IPv6 on my router. I moved away from Xfinity and the new provider did not "support" IPv6. I wanted a quick way to keep working with IPv6 without having to fix the Terraform code at the time. In addition, this allowed me to not use and pay for the NAT Gateway.
 
 # Reference Diagram for AWS Kube Cluster
 
-![](./AWS-Kubernets-Design-Arch.png)
+![](./aws-kube-sandbox.png)
 
 
 
