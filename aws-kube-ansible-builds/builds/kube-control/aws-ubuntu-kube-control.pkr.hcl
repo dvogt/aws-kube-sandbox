@@ -53,7 +53,7 @@ packer {
   }
 }
 
-# The source to build from
+# The source block defines where and how to create the base image.
 # https://developer.hashicorp.com/packer/plugins/builders/amazon/ebs
 source "amazon-ebs" "kube_control" {
   # skip_create_ami = true
@@ -78,7 +78,7 @@ source "amazon-ebs" "kube_control" {
     }
   }
 
-  # Get the Subnet for  ar.project_anme
+  # Get the Subnet from var.project_name
   subnet_filter {
     filters = {
       "tag:Name" = "${var.project_name}"
@@ -94,7 +94,7 @@ source "amazon-ebs" "kube_control" {
 
   source_ami_filter {
     filters = {
-      name                = var.ami_image_to_pull_from
+      name                = var.ami_image_to_pull_from #  the official Ubuntu AMI image on AWS
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
@@ -106,17 +106,21 @@ source "amazon-ebs" "kube_control" {
 
 
 build {
+  # Use to build the new AMI based on the source above. 
+  # Since build can build multiple sources at the same time (virtualbox, AMI, etc.) 
+  # the build is seperate from the source. 
 
   # The name of of the build used for logs.
-  # This is optional
+  # This is optional but highly recommended
   name = "kube-control-${local.today}"
 
-  # sources is listed above:
+  # The source is listed above:
   #    source "amazon-ebs" "kube_control" {  
   sources = ["source.amazon-ebs.kube_control"]
 
-  # The ansible playbook. 
-  # This  playbook references the shared Ansible files
+  # The ansible playbook to run
+  # This playbook references the shared Ansible files
+  # This is the same Ansible playbook that Vagrant uses
   provisioner "ansible" {
     playbook_file = "kube-control.ansible.yml"
     use_proxy     = false

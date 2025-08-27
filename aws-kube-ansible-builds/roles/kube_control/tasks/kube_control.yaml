@@ -99,6 +99,7 @@
     enabled: true
     masked: no
 
+# This makes sure we always have the same kube commands
 - name: Install kube packages
   apt:
     name: "{{ item }}={{ kube_package_version }}"
@@ -120,13 +121,16 @@
     name: kubectl
     selection: hold 
 
-# TODO: kubeadm init should probably be a service
-# - name: Run kubeadm init
-#   become: yes
-#   become_method: sudo
-#   command: kubeadm init --pod-network-cidr 192.168.0.0/16 --kubernetes-version 1.24.0
-#   register: kubeadm_init
+# Needed for SSM parameters
+- name: install  aws-cli --classic
+  become_method: sudo
+  command: snap install aws-cli --classic
 
+# ----------------------------------------------------
+# The items below are only used for the Contoller node
+# ----------------------------------------------------
+
+# Only used for controller
 - name: Create /home/ubuntu/.kube dir
   # become: yes
   become_method: sudo
@@ -137,10 +141,12 @@
     group: ubuntu
     mode: '0755'
 
+# This saves time during the Terraform provisioning
 - name: Pull kubeadmin images
   become_method: sudo
   command: kubeadm config images pull
 
+# Init kubernetes and push join command to SSM Parameters
 - name: kubeadm shell script
   template:
     src: kubeadm.sh
@@ -149,6 +155,7 @@
     group: ubuntu
     mode: '0755'
 
+# Copy the calico file
 - name: Calico yaml file
   template:
     src: calico.yaml
@@ -158,7 +165,7 @@
     group: ubuntu
     mode: '0644'
 
-
+# Load the calico network
 - name: Copy Calico shell script 
   template:
     src: calico.sh
@@ -168,7 +175,3 @@
     group: ubuntu
     mode: '0755'
 
-
-- name: install  aws-cli --classic
-  become_method: sudo
-  command: snap install aws-cli --classic

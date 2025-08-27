@@ -36,6 +36,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "shell", inline: <<-SHELL
+    # Create ubuntu user. Ansible will assume the ubuntu user already exists.
     useradd -m ubuntu
     usermod -a -G admin ubuntu
     echo "%ubuntu ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/ubuntu
@@ -49,6 +50,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision :ansible do |ansible|
+    # This is the Ansible playbook that Packer uses
     ansible.playbook = "kube-control.ansible.yml" 
     ansible.compatibility_mode = "2.0"
     ansible.extra_vars = {

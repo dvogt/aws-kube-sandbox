@@ -98,12 +98,14 @@
     name: containerd
     enabled: true
     masked: no
-    
+
+# This makes sure we always have the same kube commands    
 - name: Install kube packages
   apt:
     name: "{{ item }}={{ kube_package_version }}"
   loop: "{{ kube_packages }}"
 
+# the three apt-mark be done as one 
 - name: apt-mark hold kubeadm
   dpkg_selections:
     name: kubeadm
@@ -119,6 +121,7 @@
     name: kubectl
     selection: hold 
 
+# 
 - name: join cluster shell script
   template:
     src: join_cluster.sh
