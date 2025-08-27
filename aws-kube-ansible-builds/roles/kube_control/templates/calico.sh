@@ -2,10 +2,5 @@
 
 # Run as ubuntu user
 
-kubectl get nodes
+sudo -u ubuntu kubectl apply -f /home/ubuntu/calico.yaml
 
-kubectl apply -f /home/ubuntu/calico.yaml
-
-kubectl get nodes
-
-kubeadm token create --print-join-command

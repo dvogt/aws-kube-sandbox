@@ -6,35 +6,36 @@
 - name: Install base packages
   apt:
     name: "{{ item }}"
-  with_items: "{{ base_packages }}"
+  loop: "{{ base_packages }}"
   
 - name: Install docker keyring
   apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    keyring: /etc/apt/keyrings/docker.gpg
+    url: "{{ docker_apt_key_url }}"
+    keyring: "{{ docker_apt_key_ring }}"
     state: present  
 
-- name: Install apt keyring
+- name: Install kubernetes keyring
   apt_key:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    url: "{{ kube_apt_key_url }}"
+    keyring: "{{ kube_apt_key_ring }}"
     state: present  
 
 - name: Add docker apt repo
   apt_repository:
     repo: "{{ docker_apt_repo }}"
     state: present
-    filename: 
+    filename: docker
     
 - name: Add kubernetes apt repo
   apt_repository:
     repo: "{{ kube_apt_repo }}"
     state: present
-    filename: 
+    filename: kubernetes
 
 - name: Install docker packages
   apt:
     name: "{{ item }}"
-  with_items: "{{ docker_packages }}"
+  loop: "{{ docker_packages }}"
 
 - name: Adding user 'ubuntu' to group docker
   user:
@@ -74,14 +75,12 @@
   command: systemctl mask swap.target
 
 - name: Create containerd config dir
-  become: yes
   become_method: sudo
   file:
     path: /etc/containerd
     state: directory 
 
 - name: Create conatinerd conifg file
-  become: yes
   become_method: sudo
   template:
     src: containerd.config.toml
@@ -100,11 +99,13 @@
     enabled: true
     masked: no
 
+# This makes sure we always have the same kube commands
 - name: Install kube packages
   apt:
     name: "{{ item }}={{ kube_package_version }}"
-  with_items: "{{ kube_packages }}"
+  loop: "{{ kube_packages }}"
 
+# the three apt-mark be done as one 
 - name: apt-mark hold kubeadm
   dpkg_selections:
     name: kubeadm
@@ -120,15 +121,18 @@
     name: kubectl
     selection: hold 
 
-# TODO: kubeadm init should probably be a service
-# - name: Run kubeadm init
-#   become: yes
-#   become_method: sudo
-#   command: kubeadm init --pod-network-cidr 192.168.0.0/16 --kubernetes-version 1.24.0
-#   register: kubeadm_init
+# Needed for SSM parameters
+- name: install  aws-cli --classic
+  become_method: sudo
+  command: snap install aws-cli --classic
 
+# ----------------------------------------------------
+# The items below are only used for the Contoller node
+# ----------------------------------------------------
+
+# Only used for controller
 - name: Create /home/ubuntu/.kube dir
-  become: yes
+  # become: yes
   become_method: sudo
   file:
     path: /home/ubuntu/.kube
@@ -137,24 +141,31 @@
     group: ubuntu
     mode: '0755'
 
+# This saves time during the Terraform provisioning
+- name: Pull kubeadmin images
+  become_method: sudo
+  command: kubeadm config images pull
+
+# Init kubernetes and push join command to SSM Parameters
 - name: kubeadm shell script
   template:
-    src: kubeadm.sh.j2
+    src: kubeadm.sh
     dest: /home/ubuntu/kubeadm.sh
     owner: ubuntu
     group: ubuntu
     mode: '0755'
 
+# Copy the calico file
 - name: Calico yaml file
   template:
     src: calico.yaml
-    # https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
+    # https://raw.githubusercontent.com/projectcalico/calico/v3.33.0/manifests/calico.yaml
     dest: /home/ubuntu/calico.yaml
     owner: ubuntu
     group: ubuntu
     mode: '0644'
 
-
+# Load the calico network
 - name: Copy Calico shell script 
   template:
     src: calico.sh
@@ -163,5 +174,4 @@
     owner: ubuntu
     group: ubuntu
     mode: '0755'
-
 

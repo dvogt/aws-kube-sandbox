@@ -35,7 +35,7 @@ variable "instance_type" {
 }
 
 locals {
-  today = formatdate("YYYY-MM-DD", timestamp())
+  today = formatdate("YYYY-MM-DD-HH.mm", timestamp())
 }
 
 # ------------------------------
@@ -46,12 +46,17 @@ packer {
       version = ">= 0.0.2"
       source  = "github.com/hashicorp/amazon"
     }
+    ansible = {
+      version = "~> 1"
+      source = "github.com/hashicorp/ansible"
+    }
   }
 }
 
-# The source to build from
+# The source block defines where and how to create the base image.
 # https://developer.hashicorp.com/packer/plugins/builders/amazon/ebs
 source "amazon-ebs" "kube_worker" {
+
   # The name of the resulting AMI
   ami_name = "kube-worker-${local.today}"
 
@@ -65,13 +70,14 @@ source "amazon-ebs" "kube_worker" {
   ssh_username = var.ssh_username
 
   # VPC filter
+  # Get the VPC for var.project_anme
   vpc_filter {
     filters = {
       "tag:Name" = "${var.project_name}"
     }
   }
 
-  # Subnet filter
+  # Get the Subnet from var.project_name
   subnet_filter {
     filters = {
       "tag:Name" = "${var.project_name}"
@@ -87,7 +93,7 @@ source "amazon-ebs" "kube_worker" {
 
   source_ami_filter {
     filters = {
-      name                = var.ami_image_to_pull_from
+      name                = var.ami_image_to_pull_from  # the official Ubuntu AMI image on AWS
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
@@ -98,18 +104,23 @@ source "amazon-ebs" "kube_worker" {
 }
 
 build {
+  # Use to build the new AMI based on the source above. 
+  # Since build can build multiple sources at the same time (virtualbox, AMI, etc.) 
+  # the build is seperate from the source. 
+
   # The name of of the build used for logs.
-  # This is optional
+  # This is optional but highly recommended
   name = "kube-worker-${local.today}"
 
   # sources is listed above:
   #    source "amazon-ebs" "kube_worker" {
   sources = ["source.amazon-ebs.kube_worker"]
 
-  # The ansible playbook. 
-  # This  playbook reference to the shared Ansible files
+  # The ansible playbook to run
+  # This playbook references the shared Ansible files
+  # This is the same Ansible playbook that Vagrant uses
   provisioner "ansible" {
-    playbook_file = "kube-worker.yml"
+    playbook_file = "kube-worker.ansible.yml"
     use_proxy     = false
   }
 }

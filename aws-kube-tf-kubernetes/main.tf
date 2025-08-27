@@ -92,5 +92,6 @@ module "kub-workers" {
   kube_workers_ips         = var.kube_workers_ips
   kube_controller_ip       = var.kube_controller_ip
   sn_kub_workers           = module.network.sn_kub_workers
+  param_k8s_join           = var.param_k8s_join
   # ansible_security_groups = module.cp-ansible.sg_ansible
 }

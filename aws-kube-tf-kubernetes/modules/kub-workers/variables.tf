@@ -13,6 +13,11 @@ variable "kube_controller_ip" {
   default = ""
 }
 
+variable "param_k8s_join" {
+  type    = string
+  default = ""
+}
+
 variable "project_name" {
   type    = string
   default = ""

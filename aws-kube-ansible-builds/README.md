@@ -2,8 +2,11 @@
 # How to build the images for AWS
 
 ## Summary
-The best way to ensure repeatability is to build your images.  \
-The cost for storing images is less than one cup of coffee at your local BlueBucks coffee shop.
+This is used build the AMI images. \
+Vagrant will ge the Ubuntu image and install the Kubernetes binaries for the workers and controllers. The binaries are installed using Ansible playbooks.
+
+The best way to ensure repeatability is to build your own images.  \
+The cost for storing images per month is less than one cup of coffee at your local BlueBucks coffee shop.
 
 ## Build Kubernetes cluster images locally with Vagrant for testing
    * cd to the build directory on your local system.
@@ -52,9 +55,7 @@ Destroy the Vagrant box. The pupose was to make sure that Ansible would build co
 
 # Notes
 
-* `kubeadm init` is run manually on the AWS instance after it has been deployed into your environment. This is is because the credentials are tied to the IP of the instances.
-* `calico.sh` is run manully because it needs `kubeadmn init` to be run first. At the time of this writing it was difficult to know when kubeadmin was ready so it was not run automatically after `kubeadm init`.
-* Delete the 
+* `./kubeadm.sh` and `calico.sh` are run automatically during the deployment of Terraform.
 
 # Packages
 

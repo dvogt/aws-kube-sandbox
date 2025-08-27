@@ -23,28 +23,12 @@ resource "aws_default_security_group" "packer" {
   # }
 
   # UNCOMMENT FOR IPV4
-  # ingress {
-  #   description = "SSH from VPC"
-  #   from_port   = 22
-  #   to_port     = 22
-  #   protocol    = "tcp"
-  #   cidr_blocks = [var.ingress_ip_v4]
-  # }
-
   ingress {
-    description      = "SSH from your workstation IPv6"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    ipv6_cidr_blocks = [var.ingress_ip_v6]
-  }
-
-  ingress {
-    description      = "ICMP from your workstation IPv6"
-    from_port        = -1
-    to_port          = -1
-    protocol         = "icmpv6"
-    ipv6_cidr_blocks = [var.ingress_ip_v6]
+    description = "SSH from VPC"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [var.ingress_ip_v4]
   }
 
 

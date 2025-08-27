@@ -23,11 +23,8 @@ Vagrant.configure("2") do |config|
   # boxes at https://vagrantcloud.com/search.
   config.vm.box = "cloud-image/ubuntu-24.04"
   config.vm.box_version = "20250516.0.0"
-  # config.vm.box = "ubuntu/noble64"
   
   config.vm.hostname = "kubernetes"
-
-  # config.vm.network "private_network", type: "dhcp"
 
   config.vm.provider "virtualbox" do |vb|
     # Display the VirtualBox GUI when booting the machine
@@ -39,9 +36,11 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "shell", inline: <<-SHELL
+    # Create ubuntu user. Ansible will assume the ubuntu user already exists.
+    useradd -m ubuntu
     usermod -a -G admin ubuntu
     echo "%ubuntu ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/ubuntu
-    cp -pr /home/vagrant/.ssh /home/ubuntu/
+    cp -pr /home/vagrant/.ssh /home/ubuntu/.
     chown -R ubuntu:ubuntu /home/ubuntu
   SHELL
 
@@ -51,7 +50,12 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision :ansible do |ansible|
-    ansible.playbook = "kube-control.yml" 
+    # This is the Ansible playbook that Packer uses
+    ansible.playbook = "kube-control.ansible.yml" 
+    ansible.compatibility_mode = "2.0"
+    ansible.extra_vars = {
+      ansible_python_interpreter: "/usr/bin/python3"
+    }
   end
 
   # These scripts are ran from Vagrant becuause Vagrant has access to ssh. 

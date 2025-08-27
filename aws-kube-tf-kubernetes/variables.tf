@@ -12,7 +12,7 @@ variable "aws_ami_owners" {
 variable "aws_ami_images" {
   description = "This is the AMI image used for building the bastion host"
   type        = list(string)
-  default     = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  default     = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"]
 }
 
 variable "aws_ami_kube_control_images" {
@@ -25,6 +25,12 @@ variable "aws_ami_kube_worker_images" {
   description = "This is the AMI image used for building the kube_worker hosts"
   type        = list(string)
   default     = ["kube-worker-*"]
+}
+
+variable "param_k8s_join" { 
+  description = "This is the SSM Parameter store for k8s join"
+  type        = string
+  default     = "k8s-join" 
 }
 
 variable "project_name" {
