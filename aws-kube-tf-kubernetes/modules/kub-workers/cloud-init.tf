@@ -30,6 +30,7 @@ locals {
     serviceSubnet               = "10.96.0.0/12,fd00:10:96::/112"
     dns                         = var.controller_r53_record
     bucket_name                 = local.bucket_name
+    aws_region                  = var.aws_region
   })
 }
 

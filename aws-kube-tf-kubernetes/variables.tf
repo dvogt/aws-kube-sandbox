@@ -1,4 +1,5 @@
 
+
 # ======================================================
 # General Project Vars
 # ======================================================
@@ -6,43 +7,51 @@
 variable "aws_ami_owners" {
   description = "This is the owner account id for Ubuntu to tell Amazon where to pull the base image from to build the bastion host"
   type        = list(string)
-  default     = ["099720109477"]
+  default     = []
 }
 
 variable "aws_ami_images" {
   description = "This is the AMI image used for building the bastion host"
   type        = list(string)
-  default     = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"]
+  default     = []
 }
 
 variable "aws_ami_kube_control_images" {
   description = "This is the AMI image used for building the kube_control host"
   type        = list(string)
-  default     = ["kube-control-*"]
+  default     = []
 }
 
 variable "aws_ami_kube_worker_images" {
   description = "This is the AMI image used for building the kube_worker hosts"
   type        = list(string)
-  default     = ["kube-worker-*"]
+  default     = []
 }
 
-variable "param_k8s_join" { 
-  description = "This is the SSM Parameter store for k8s join"
+variable "k8s_ssm_join" { 
+  description = "SSM name used to store the join command used by workers."
   type        = string
-  default     = "k8s-join" 
+  default     = "" 
 }
+
+
+variable "k8s_secrets_config" { 
+  description = "Secret name to be to store kbs adm config file over 8K"
+  type        = string
+  default     = "" 
+}
+
 
 variable "project_name" {
   description = "Project Name is used for tags and naming of services"
   type        = string
-  default     = "aws-kube-sandbox"
+  default     = ""
 }
 
 variable "ssh_pub_key_path" {
   description = "Public Key to be added to images to ssh into"
   type        = string
-  default     = "~/.ssh/id_rsa.pub"
+  default     = ""
 }
 
 # variable "aws_credentials_for_tf" {
@@ -54,13 +63,13 @@ variable "ssh_pub_key_path" {
 variable "aws_region" {
   description = "AWS region to launch services."
   type        = string
-  default     = "us-east-1"
+  default     = ""
 }
 
 variable "aws_az_1" {
   description = "AWS Availability to launch servers."
   type        = string
-  default     = "us-east-1b"
+  default     = ""
 }
 
 
@@ -71,13 +80,13 @@ variable "aws_az_1" {
 
 
 variable "vpc_ipv6_netmask_length" {
-  default = "56"
+  default = ""
 }
 
 variable "vpc_cidr" {
   description = "CIDR for VPC"
   type        = string
-  default     = "10.0.0.0/16"
+  default     = ""
 }
 
 
@@ -89,12 +98,12 @@ variable "vpc_cidr" {
 variable "cidr_bastion" {
   description = "CIDR for bastion subnet"
   type        = string
-  default     = "10.0.3.0/28"
+  default     = ""
 }
 
 variable "bastion_instance_type" {
   type    = string
-  default = "t2.micro"
+  default = ""
 }
 
 variable "bastion_disable_api_termination" {
@@ -110,28 +119,43 @@ variable "bastion_disable_api_termination" {
 variable "cidr_kube_workers" {
   description = "CIDR for Kube Workers subnet"
   type        = string
-  default     = "10.0.5.0/24"
+  default     = ""
 }
 
 variable "kube_controller_ip" {
   description = "This is the IP of the kube controller"
   type        = string
-  default     = "10.0.5.10"
+  default     = ""
 }
 
 variable "kube_workers_ips" {
   description = "This will determine how many workers are created."
   # To add more worker nodes, add to the list below. 
   # The mapping needs to start with zero or it will break Terraform
-  default = {
-    "0" = "10.0.5.102"
-    "1" = "10.0.5.103"
-    # "2" = "10.0.5.104"
-  }
+  default = {}
 }
 
 variable "kub_worker_instance_type" {
   description = "Kube workers instance type"
   type        = string
-  default     = "t2.medium"
+  default     = ""
 }
+
+variable "controller_r53_ttl" {
+  description = "TTL for records in seconds"
+  type        = string
+  default     = ""
+}
+
+variable "controller_hosted_zone" {
+  description = "A and AAAAA records for controller "
+  type        = string
+  default     = ""
+}
+
+variable "controller_r53_record" {
+  description = "Subdomain for hosted zone. Example: k8s.aws.dvogt.net"
+  type        = string
+  default     = ""
+}
+

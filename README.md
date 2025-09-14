@@ -1,5 +1,5 @@
 
-# Kubernetes Sandbox
+# Kubernetes Sandbox Overveiw
 
 A simplified, **non-production** Kubernetes cluster designed to:
 
@@ -13,6 +13,57 @@ Reference material used to guide automation design:
 
 * [Install Kubernetes on Ubuntu – phoenixNAP](https://phoenixnap.com/kb/install-kubernetes-on-ubuntu)
 * [Install Kubernetes on Ubuntu – Cherry Servers](https://www.cherryservers.com/blog/install-kubernetes-ubuntu)
+
+
+---
+## Asumptions
+
+* Your laptop has a routable IPv6 (See below).
+* The instrucitons are setup for use on MacOS or Linux (Linux has not been tested).
+* This environment is a proof of concept with some security measure in place.
+* You have complete admin rights to your AWS account.
+* Your AWS credentials are set to default (shown below).
+* The environment will be built in the us-east-1 region. This can be changed in the variables files:
+   * aws-kube-shared/vars.ansible.yml
+   * aws-kube-shared/vars.pkr.hcl
+   * aws-kube-tf-kubernetes/variables.tf
+   * aws-kube-tf-kubernetes/get_k8s_config_file.sh (assuming you want to copy the config file to your laptop)
+* DNS Zone that can be modified in AWS ??????
+  
+
+---
+## What is created in AWS
+
+The end result for the K8S sandbox. This does not include the Packer TF setup.
+
+|QTY|AWS Service|Name<br/>if applicable|Description|
+|---|---|---|---|
+|1|VPC|**aws-kube-sandbox**|VPC for K8S Sandbox|
+|1|EC2 Instance||Bastion Host<br/>t2.micro|
+|1|EC2 Instance||K8S Controller|
+|2|EC2 Instance||K8S Workers|
+|1|SSM Parameter Store||Paramter for ```kubectl join``` command|
+|1|||Secret for ```~/.kube/config``` file.<br/>This is due to the config file being over 8K and having|Secrets Manager|
+|1|S3 Endpoint|||
+|1|SSM Endpoint|||
+|1|Secrets Manager Endpoint|||
+|2|Route53 records||For A and AAAA records for Kube config and K8S CLient certificates|
+|3|Security Groups||One for the bastion host<br/>One for K8S controler<br/>One for K8S workers ||
+|1|IAM Role|||
+|3|AWS Policies|SSM Put Policy<br/>Secrets Policy<br/>S3 Policy||
+|1|S3 Bucket|k8s-sandbox-<8 character random id>||
+|1|S3 Object|configs/k8s_sandbox/ctrl_calico.yaml||
+|1|Internet Gateway|||
+|1|Egress Internet Gateway||This is for IPv6 traffic. This is used instead of NAT Gateway |
+|2|Route Tables||One for the bastion host<br/>One for K8S cluster|
+|2|Subnets||One for the bastion host<br/>One for K8S cluster|
+|1||||
+|1||||
+
+
+These attributes can be adjusted in the variable files in the ```aws-kube-shared``` directory.
+
+
 
 ---
 
@@ -33,9 +84,6 @@ This is a [development sandbox](https://en.wikipedia.org/wiki/Sandbox_%28softwar
 * Gain hands-on experience with Kubernetes infrastructure automation.
 * Spin clusters up and tear them down quickly to reduce costs.
 
-**Planned enhancements:**
-
-* Add a CI/CD pipeline to deploy sample applications to Kubernetes.
 
 ---
 
@@ -82,18 +130,13 @@ Follow these steps in order:
 
 | Step | Directory                 | Purpose                                              |
 | ---- | ------------------------- | ---------------------------------------------------- |
-| 1    | `aws-kube-shared`         | Shared variables for Packer and Ansible              |
+| 1    | `aws-kube-shared`         | Shared variables for Terraform, Packer and Ansible              |
 | 2    | `aws-kube-ansible-builds` | Test Ansible code locally with Vagrant               |
 | 3    | `aws-kube-tf-packer`      | Create a temporary AWS VPC for AMI builds            |
 | 4    | `aws-kube-ansible-builds` | Build AWS AMIs using Packer                          |
 | 5    | `aws-kube-tf-packer`      | Destroy the AMI build VPC                            |
 | 6    | `aws-kube-tf-kubernetes`  | Deploy the Kubernetes cluster VPC and infrastructure |
 
-**Next Steps:**
-
-* SSH into the Bastion Host.
-* SSH into the Kubernetes Controller.
-* Experiment and break things—this environment is designed to be disposable.
 
 ---
 
@@ -247,6 +290,8 @@ This setup doubled as an IPv6 learning project:
 * Consolidate Packer, Vagrant, and Ansible configs into single files.
 * Create task-specific shell wrappers for each tool.
 * Explore having Packer handle Vagrant builds.
+* Add a CI/CD pipeline to deploy sample applications to Kubernetes.
+
 
 ---
 

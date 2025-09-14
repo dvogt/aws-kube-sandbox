@@ -56,11 +56,11 @@ runcmd:
   - sudo -u ubuntu /home/ubuntu/render-kubeadm.sh
   - sudo -u ubuntu /home/ubuntu/kubeadm.sh  
   - sudo -u ubuntu /home/ubuntu/add_config_to_secrets.sh
-  - aws configure set region us-east-1
+  - aws configure set region ${aws_region}
   - aws configure set use_dualstack_endpoint true
   - echo "start calico copy"
   - aws s3 cp s3://"${bucket_name}/configs/k8s_sandbox/ctrl_calico.yaml" /home/ubuntu/ctrl_calico.yaml
   - chown ubuntu:ubuntu /home/ubuntu/ctrl_calico.yaml
   - chmod 0644 /home/ubuntu/ctrl_calico.yaml
-  - echo "start calico coapplypy"
+  - echo "start calico apply"
   - sudo -u ubuntu kubectl apply -f /home/ubuntu/ctrl_calico.yaml

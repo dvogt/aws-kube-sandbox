@@ -51,12 +51,7 @@ resource "aws_instance" "kub_controller" {
     aws_vpc_endpoint.ssm,
     aws_vpc_endpoint.secrets_manager,
     aws_vpc_endpoint.s3,
-    aws_vpc_endpoint.sts
   ]
-    # aws_vpc_endpoint.s3, 
-    # aws_vpc_endpoint.ecr_api, 
-    # aws_vpc_endpoint.ecr_dkr ]
-
 }
 
 

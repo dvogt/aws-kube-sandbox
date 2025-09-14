@@ -1,1 +1,7 @@
 /archive/*
+.ansible/.lock
+.DS_Store
+*.log
+zzz*
+terraform.tfstate
+.terraform.tfstate.lock.info
