@@ -66,6 +66,7 @@
       net.bridge.bridge-nf-call-iptables  = 1
       net.ipv4.ip_forward                 = 1
       net.bridge.bridge-nf-call-ip6tables = 1
+      net.ipv6.conf.default.forwarding    = 1
     create: true
 
 - name: Restart sysctl to enable br_netfilter and overlay
@@ -122,13 +123,13 @@
     selection: hold 
 
 # 
-- name: join cluster shell script
-  template:
-    src: join_cluster.sh
-    dest: /home/ubuntu/join_cluster.sh
-    owner: ubuntu
-    group: ubuntu
-    mode: '0755'
+# - name: join cluster shell script
+#   template:
+#     src: join_cluster.sh
+#     dest: /home/ubuntu/join_cluster.sh
+#     owner: ubuntu
+#     group: ubuntu
+#     mode: '0755'
 
 - name: install  aws-cli --classic
   become_method: sudo
