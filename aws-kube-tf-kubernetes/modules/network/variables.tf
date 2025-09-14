@@ -45,3 +45,29 @@ variable "cidr_kube_workers" {
 }
 
 
+variable "controller_hosted_zone" {
+  type        = string
+  default     = ""
+}
+
+variable "controller_r53_record" {
+  type        = string
+  default     = ""
+}
+
+variable "controller_r53_ttl" {
+  type        = string
+  default     = ""
+}
+
+variable "controller_ipv6" {
+  type        = list
+  default     = []
+}
+
+variable "controller_ipv4" {
+  type        = string
+  default     = ""
+}
+
+

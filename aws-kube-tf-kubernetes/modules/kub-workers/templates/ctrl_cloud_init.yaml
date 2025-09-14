@@ -1,0 +1,66 @@
+#cloud-config
+
+# The following was moved from the Ansible/Packer build to have more control during deployment
+# This way we don't need creat new imaages for each run. This is more flexible.
+write_files:
+  - path: /home/ubuntu/add_config_to_secrets.sh
+    permissions: "755"
+    owner: ubuntu:ubuntu
+    content: |
+      ${indent(6, add_config_to_secrets_body)}
+  - path: /home/ubuntu/kubeadm.sh
+    permissions: "755"
+    owner: ubuntu:ubuntu
+    content: |
+      ${indent(6, kube_adm_sh_body)}
+  - path: /home/ubuntu/render-kubeadm.sh
+    permissions: "0755"
+    owner: ubuntu:ubuntu
+    content: |
+      #!/bin/bash
+      set -euo pipefail
+ 
+      # This caused a dependency issue when trying to add them to the regular template.
+      # It was to get the IPs on the same instance theis template was going into. 
+      TOKEN=$(curl -fsS -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+      CTRL_IPV4=$(curl -fsS -H "X-aws-ec2-metadata-token: $${TOKEN}" http://169.254.169.254/latest/meta-data/local-ipv4)
+      CTRL_IPV6=$(curl -fsS -H "X-aws-ec2-metadata-token: $${TOKEN}" http://169.254.169.254/latest/meta-data/ipv6)
+
+      cat > /home/ubuntu/kubeadm.yaml <<EOF
+      apiVersion: kubeadm.k8s.io/v1beta4
+      kind: ClusterConfiguration
+      # Use a stable DNS name with both A + AAAA records if possible
+      controlPlaneEndpoint: "${dns}:6443"
+
+      apiServer:
+        certSANs:
+          - $${CTRL_IPV4}          # controller IPv4
+          - $${CTRL_IPV6}          # controller IPv6
+          - ${k8s_internal_cluster_ip}  # Service "kubernetes" ClusterIP (optional to keep)
+          - ${dns}                      # DNS in certs
+        extraArgs:
+          - name: bind-address
+            value: "::"
+
+      networking:
+        podSubnet: "${podSubnet}"        # match your Calico pools
+        serviceSubnet: "${serviceSubnet}"     # dual-stack Services
+      ---
+      apiVersion: kubeadm.k8s.io/v1beta4
+      kind: InitConfiguration
+      localAPIEndpoint:
+        advertiseAddress: "$${CTRL_IPV4}"
+        bindPort: 6443
+      EOF
+runcmd:
+  - sudo -u ubuntu /home/ubuntu/render-kubeadm.sh
+  - sudo -u ubuntu /home/ubuntu/kubeadm.sh  
+  - sudo -u ubuntu /home/ubuntu/add_config_to_secrets.sh
+  - aws configure set region us-east-1
+  - aws configure set use_dualstack_endpoint true
+  - echo "start calico copy"
+  - aws s3 cp s3://"${bucket_name}/configs/k8s_sandbox/ctrl_calico.yaml" /home/ubuntu/ctrl_calico.yaml
+  - chown ubuntu:ubuntu /home/ubuntu/ctrl_calico.yaml
+  - chmod 0644 /home/ubuntu/ctrl_calico.yaml
+  - echo "start calico coapplypy"
+  - sudo -u ubuntu kubectl apply -f /home/ubuntu/ctrl_calico.yaml

@@ -52,6 +52,7 @@
       br_netfilter
     create: true
 
+
 - name: Start modprobe overlay
   command: modprobe overlay
 
@@ -66,6 +67,7 @@
       net.bridge.bridge-nf-call-iptables  = 1
       net.ipv4.ip_forward                 = 1
       net.bridge.bridge-nf-call-ip6tables = 1
+      net.ipv6.conf.default.forwarding    = 1
     create: true
 
 - name: Restart sysctl to enable br_netfilter and overlay
@@ -146,32 +148,41 @@
   become_method: sudo
   command: kubeadm config images pull
 
-# Init kubernetes and push join command to SSM Parameters
-- name: kubeadm shell script
-  template:
-    src: kubeadm.sh
-    dest: /home/ubuntu/kubeadm.sh
-    owner: ubuntu
-    group: ubuntu
-    mode: '0755'
+# # Init kubernetes and push join command to SSM Parameters
+# - name: kubeadm shell script
+#   template:
+#     src: kubeadm.sh
+#     dest: /home/ubuntu/kubeadm.sh
+#     owner: ubuntu
+#     group: ubuntu
+#     mode: '0755'
 
-# Copy the calico file
-- name: Calico yaml file
-  template:
-    src: calico.yaml
-    # https://raw.githubusercontent.com/projectcalico/calico/v3.33.0/manifests/calico.yaml
-    dest: /home/ubuntu/calico.yaml
-    owner: ubuntu
-    group: ubuntu
-    mode: '0644'
+# # Push kube config to ssm
+# - name: kube config to ssm
+#   template:
+#     src: add_config_to_ssm.sh
+#     dest: /home/ubuntu/add_config_to_ssm.sh
+#     owner: ubuntu
+#     group: ubuntu
+#     mode: '0755'
 
-# Load the calico network
-- name: Copy Calico shell script 
-  template:
-    src: calico.sh
-    # https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
-    dest: /home/ubuntu/calico.sh
-    owner: ubuntu
-    group: ubuntu
-    mode: '0755'
+# # Copy the calico file
+# - name: Calico yaml file
+#   template:
+#     src: calico.yaml
+#     # https://raw.githubusercontent.com/projectcalico/calico/v3.33.0/manifests/calico.yaml
+#     dest: /home/ubuntu/calico.yaml
+#     owner: ubuntu
+#     group: ubuntu
+#     mode: '0644'
+
+# # Load the calico network
+# - name: Copy Calico shell script 
+#   template:
+#     src: calico.sh
+#     # https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
+#     dest: /home/ubuntu/calico.sh
+#     owner: ubuntu
+#     group: ubuntu
+#     mode: '0755'
 

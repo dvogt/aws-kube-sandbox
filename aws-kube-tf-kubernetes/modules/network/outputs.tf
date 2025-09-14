@@ -15,5 +15,9 @@ output "sn_bastion" {
 }
 
 output "sn_kub_workers" {
-  value = aws_subnet.sn_kub_workers.id
+  value = aws_subnet.sn_kub_workers
+}
+
+output "route_table" {
+  value = aws_route_table.public_rt
 }

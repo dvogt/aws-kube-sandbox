@@ -19,6 +19,7 @@ resource "aws_network_acl" "bastion" {
     to_port         = 22
   }
 
+
   # Allow SSH from remote client with specific ipv4 address
   # UNCOMMENT FOR IPV4
   # ingress {
@@ -219,6 +220,16 @@ resource "aws_network_acl" "kub_workers" {
     icmp_code  = "-1"
     from_port  = 0
     to_port    = 0
+  }
+
+   # Allow 6443 to kub control from remote client with specific ipv6 address
+  ingress {
+    rule_no         = 105
+    action          = "allow"
+    ipv6_cidr_block = var.ingress_ip_v6
+    protocol        = "tcp"
+    from_port       = 6443
+    to_port         = 6443
   }
 
   # Allow ssh in from bastion subnet

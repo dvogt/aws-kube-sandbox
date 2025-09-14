@@ -1,0 +1,14 @@
+#cloud-config
+
+# The following was moved from the Ansible/Packer build to have more control during deployment
+# This way we dont need creat new imaages for each run. This is more flexible.
+write_files:
+  - path: /home/ubuntu/wrkr_join_cluster.sh
+    permissions: '755'
+    owner: ubuntu:ubuntu
+    content: |
+      ${indent(6, wrkr_join_cluster_body)}
+
+  
+runcmd:
+  - sudo -u ubuntu /home/ubuntu/wrkr_join_cluster.sh

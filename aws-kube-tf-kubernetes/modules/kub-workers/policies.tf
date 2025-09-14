@@ -1,83 +1,3 @@
-
-# # --- Controller role (can write the join command) ---
-
-# # resource "aws_iam_policy" "ctl_ssm_write" {
-# #   name   = "k8s-ctl-ssm-write"
-# #   policy = jsonencode({
-# #     Version = "2012-10-17",
-# #     Statement = [{
-# #       Effect   = "Allow",
-# #       Action   = ["ssm:PutParameter"],
-# #       Resource = "arn:aws:ssm:us-east-1:${data.aws_caller_identity.current.account_id}:parameter/${var.param_k8s_join}"
-        
-# #       #Resource = "*", # keep simple; restrict to the exact ARN in prod
-# #       # Condition = { 
-# #       #   Bool = {
-# #       #     "ssm:Overwrite" = "true"
-# #       #   }
-# #       #   "StringEquals": { "ssm:ResourceTag/Project": var.param_k8s_join } 
-# #       # }
-# #     }]
-# #   })
-# # }
-
-# data "aws_caller_identity" "current" {}
-
-# resource "aws_iam_role_policy_attachment" "ctl_ssm_write_attach" {
-#   role       = aws_iam_role.ctl_role.name
-#   policy_arn = aws_iam_policy.ctl_ssm_write.arn
-# }
-
-# # # --- Worker role (can read the join command) ---
-# resource "aws_iam_role" "wrk_role" {
-#   name               = "k8s-wrk-role"
-#   assume_role_policy = data.aws_iam_policy_document.ec2_trust.json
-# }
-
-# resource "aws_iam_instance_profile" "wrk_profile" { 
-#     role = aws_iam_role.wrk_role.name 
-# }
-
-# resource "aws_iam_policy" "wrk_ssm_read" {
-#   name   = "k8s-wrk-ssm-read"
-#   policy = jsonencode({
-#     Version = "2012-10-17",
-#     Statement = [{
-#       Effect   = "Allow",
-#       Action   = ["ssm:GetParameter"],
-#       Resource = "*"
-#     }]
-#   })
-# }
-# resource "aws_iam_role_policy_attachment" "wrk_ssm_read_attach" {
-#   role       = aws_iam_role.wrk_role.name
-#   policy_arn = aws_iam_policy.wrk_ssm_read.arn
-# }
-
-# data "aws_iam_policy_document" "ec2_trust" {
-#   statement {
-#     effect = "Allow"
-
-#     principals {  
-#       identifiers = ["ec2.amazonaws.com"]
-#        type = "Service"
-#     }
-
-#     actions = ["sts:AssumeRole"]
-    
-#   }
-# }
-
-# resource "aws_iam_role" "ctl_role" {
-#   name               = "k8s-ctl-role"
-#   assume_role_policy = data.aws_iam_policy_document.ec2_trust.json
-# }
-
-# resource "aws_iam_instance_profile" "ctl_profile" { 
-#   role = aws_iam_role.ctl_role.name 
-# }
-
-
 ############################
 # Data helpers
 ############################
@@ -85,23 +5,31 @@ data "aws_partition" "current" {}
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-############################
-# Variables (tune as needed)
-############################
-# variable "param_path_prefix" {
-#   description = "Prefix under which the instance can manage SSM parameters"
-#   type        = string
-#   default     = "/myapp/*"
-# }
+
+#####################################
+# EC2 role for workers and controller
+#####################################
+resource "aws_iam_role" "ec2_role" {
+  name               = "ec2_role_workers_controller"
+  assume_role_policy = data.aws_iam_policy_document.ec2_trust.json
+}
 
 ############################
-# Trust policy (EC2 assumes role)
+# Instance profile for EC2
 ############################
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "ec2_role_workers_controller-profile"
+  role = aws_iam_role.ec2_role.name
+}
+
+####################################################
+# Trust policy (EC2 workers/controller assumes role)
+####################################################
 data "aws_iam_policy_document" "ec2_trust" {
   statement {
     sid     = "EC2AssumeRole"
     effect  = "Allow"
-    actions = ["sts:AssumeRole"]
+    actions = ["sts:AssumeRole",]
 
     principals {
       type        = "Service"
@@ -110,14 +38,9 @@ data "aws_iam_policy_document" "ec2_trust" {
   }
 }
 
-resource "aws_iam_role" "ec2_role" {
-  name               = "ec2-ssm-parameter-writer"
-  assume_role_policy = data.aws_iam_policy_document.ec2_trust.json
-}
-
-############################
+##############################################################
 # IAM permissions (allow overwrite of SSM params under prefix)
-############################
+##############################################################
 # NOTE:
 # - Overwrite behavior is controlled by the API call (PutParameter with Overwrite=true).
 # - The condition below further restricts that only overwriting calls are allowed.
@@ -130,8 +53,10 @@ data "aws_iam_policy_document" "ssm_put_with_overwrite" {
       "ssm:PutParameter"
     ]
     resources = [
-      "arn:${data.aws_partition.current.partition}:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${var.param_k8s_join}"
+      "arn:${data.aws_partition.current.partition}:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${var.k8s_ssm_join}",
     ]
+    #  "arn:${data.aws_partition.current.partition}:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${var.k8s_secrets_config}"
+   
 
     # Optional safety: only allow if the request sets Overwrite=true
     condition {
@@ -152,11 +77,15 @@ data "aws_iam_policy_document" "ssm_put_with_overwrite" {
       "ssm:DescribeParameters"
     ]
     resources = [
-      "arn:${data.aws_partition.current.partition}:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${var.param_k8s_join}"
+      "arn:${data.aws_partition.current.partition}:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${var.k8s_ssm_join}"
     ]
+    # "arn:${data.aws_partition.current.partition}:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${var.k8s_secrets_config}"
   }
 }
 
+###################################
+# Policy to overwrite SSM Paramters
+###################################
 resource "aws_iam_policy" "ssm_put_policy" {
   name   = "ec2-ssm-overwrite-parameters"
   policy = data.aws_iam_policy_document.ssm_put_with_overwrite.json
@@ -167,20 +96,49 @@ resource "aws_iam_role_policy_attachment" "attach_put_policy" {
   policy_arn = aws_iam_policy.ssm_put_policy.arn
 }
 
-############################
-# Instance profile for EC2
-############################
-resource "aws_iam_instance_profile" "ec2_profile" {
-  name = "ec2-ssm-parameter-writer-profile"
-  role = aws_iam_role.ec2_role.name
+#################################
+# Policy for pulling docker image
+#################################
+# data "aws_iam_policy" "ecr_readonly" {
+#   arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+# }
+
+# resource "aws_iam_role_policy_attachment" "nodes_ecr_ro" {
+#   role       = aws_iam_role.ec2_role.name
+#   policy_arn = data.aws_iam_policy.ecr_readonly.arn
+# }
+
+
+####################################
+# Policy to allow controller to update secrets manager
+####################################
+
+data "aws_iam_policy_document" "controller_secrets_perm" {
+  statement {
+    sid     = "UpdateAndReadSecret"
+    effect  = "Allow"
+    actions = [
+      "secretsmanager:PutSecretValue",
+      "secretsmanager:GetSecretValue",
+      "secretsmanager:DescribeSecret"
+    ]
+    # Include the secret ARN and all version ARNs
+    resources = [
+      aws_secretsmanager_secret.kube_config.arn,
+      "${aws_secretsmanager_secret.kube_config.arn}*"
+    ]
+  }
 }
 
-############################
-# Example EC2 usage (attach the profile)
-############################
-# resource "aws_instance" "example" {
-#   ami                    = "ami-xxxxxxxx"
-#   instance_type          = "t3.micro"
-#   iam_instance_profile   = aws_iam_instance_pr_
+resource "aws_iam_policy" "controller_secrets_policy" {
+  name   = "controller-update-big-config-secret"
+  policy = data.aws_iam_policy_document.controller_secrets_perm.json
+}
 
+# Attach to your controller's IAM role (replace with your role)
+resource "aws_iam_role_policy_attachment" "controller_attach_secrets" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = aws_iam_policy.controller_secrets_policy.arn
+}
 
+# An error occurred (AccessDeniedException) when calling the PutSecretValue operation: User: arn:aws:sts::685960513651:assumed-role/ec2_role_workers_controller/i-05e333cc5cb159e0e is not authorized to perform: secretsmanager:PutSecretValue on resource: k8s-join because no identity-based policy allows the secretsmanager:PutSecretValue action

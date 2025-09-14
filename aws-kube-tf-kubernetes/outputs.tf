@@ -60,7 +60,11 @@ output "kub_worker_private_ip" {
   value = module.kub-workers.kub_worker_private_ip
 }
 
-output "kub_controller_private_ip" {
-  value = module.kub-workers.kub_controller_private_ip
+output "kub_controller_private_ipv4" {
+  value = module.kub-workers.kub_controller_private_ipv4
+}
+
+output "kub_controller_ipv6" {
+  value = module.kub-workers.kub_controller_ipv6
 }
 

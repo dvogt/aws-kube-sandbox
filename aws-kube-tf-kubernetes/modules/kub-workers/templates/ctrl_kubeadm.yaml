@@ -1,0 +1,24 @@
+apiVersion: kubeadm.k8s.io/v1beta4
+kind: ClusterConfiguration
+# Use a stable DNS name with both A + AAAA records if possible
+controlPlaneEndpoint: "${dns}:6443"
+
+apiServer:
+  certSANs:
+    - ${controller_ipv4}          # controller IPv4
+    - ${controller_ipv6}          # controller IPv6
+    - ${k8s_internal_cluster_ip}  # Service "kubernetes" ClusterIP (optional to keep)
+    - ${dns}                      # DNS in certs
+  extraArgs:
+    - name: bind-address
+      value: "::"
+
+networking:
+  podSubnet: "${podSubnet}"        # match your Calico pools
+  serviceSubnet: "${serviceSubnet}"     # dual-stack Services
+---
+apiVersion: kubeadm.k8s.io/v1beta4
+kind: InitConfiguration
+localAPIEndpoint:
+  advertiseAddress: "${controller_ipv4}"
+  bindPort: 6443

@@ -51,6 +51,15 @@ module "network" {
   cidr_bastion      = var.cidr_bastion
   cidr_kube_workers = var.cidr_kube_workers
   ingress_ip_v6     = local.ingress_ip_v6
+
+  controller_hosted_zone = var.controller_hosted_zone
+  controller_r53_record  = var.controller_r53_record
+  controller_r53_ttl     = var.controller_r53_ttl
+  controller_ipv6        = module.kub-workers.kub_controller_ipv6
+  controller_ipv4        = module.kub-workers.kub_controller_private_ipv4
+  
+
+
   # UNCOMMENT FOR IPV4
   # ingress_ip_v4     = local.ingress_ip_v4
 }
@@ -92,6 +101,12 @@ module "kub-workers" {
   kube_workers_ips         = var.kube_workers_ips
   kube_controller_ip       = var.kube_controller_ip
   sn_kub_workers           = module.network.sn_kub_workers
-  param_k8s_join           = var.param_k8s_join
+  k8s_ssm_join             = var.k8s_ssm_join
+  k8s_secrets_config       = var.k8s_secrets_config
+  aws_region               = var.aws_region
+  ingress_ip_v6            = local.ingress_ip_v6
+  controller_r53_record    = var.controller_r53_record
+  route_table              = module.network.route_table
+
   # ansible_security_groups = module.cp-ansible.sg_ansible
 }

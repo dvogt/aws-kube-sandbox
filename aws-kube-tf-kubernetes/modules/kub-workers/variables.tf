@@ -13,9 +13,19 @@ variable "kube_controller_ip" {
   default = ""
 }
 
-variable "param_k8s_join" {
+variable "k8s_ssm_join" {
   type    = string
   default = ""
+}
+
+variable "k8s_secrets_config" {
+  type    = string
+  default = ""
+}
+
+variable "controller_r53_record" {
+  type        = string
+  default     = ""
 }
 
 variable "project_name" {
@@ -49,7 +59,7 @@ variable "ssh_key" {
 }
 
 variable "sn_kub_workers" {
-  type    = string
+  type    = any
   default = ""
 }
 
@@ -64,6 +74,22 @@ variable "kub_worker_instance_type" {
 
 variable "sg_bastion_id" {
   type    = string
+  default = ""
+}
+
+variable "aws_region" {
+  type = string
+  default = ""
+  
+}
+
+variable "ingress_ip_v6" {
+  type    = string
+  default = ""
+}
+
+variable route_table {
+  type    = any
   default = ""
 }
 
