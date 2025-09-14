@@ -19,7 +19,8 @@
 1. On the **kube controller** run `kubectl get nodes` to verify you nodes are have joined and are ready.
 1. Copy the .kube/config file to your laptop by running
    <br/>```get_k8s_config_file.sh```
-1. Run ```kubectl get nodes``` from you laptop or the con
+   <br/>**Note:** you may have to wait a couple of minutes for the config file to show up.
+1. Run ```kubectl get nodes``` from you laptop or the controller
 1. Play in your new sandbox
    * 10.0.5.10 is the Kubernetes Controller
 1. After using the sandox **run:** `./run_tf_apply` # This will save you a fair amount of money
